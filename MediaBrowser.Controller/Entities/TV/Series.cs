@@ -204,7 +204,7 @@ namespace MediaBrowser.Controller.Entities.TV
 
             SetSeasonQueryOptions(query, user);
 
-            return LibraryManager.GetItemList(query);
+            return ReorderSeasonsSpecialsLast(LibraryManager.GetItemList(query));
         }
 
         private void SetSeasonQueryOptions(InternalItemsQuery query, User user)
@@ -263,7 +263,9 @@ namespace MediaBrowser.Controller.Entities.TV
 
             SetSeasonQueryOptions(query, user);
 
-            return LibraryManager.GetItemsResult(query);
+            var result = LibraryManager.GetItemsResult(query);
+            result.Items = ReorderSeasonsSpecialsLast(result.Items);
+            return result;
         }
 
         public IEnumerable<BaseItem> GetEpisodes(User user, DtoOptions options, bool shouldIncludeMissingEpisodes)
@@ -443,6 +445,16 @@ namespace MediaBrowser.Controller.Entities.TV
             {
                 var episodeItem = (Episode)episode;
 
+                // For Season 0 (Specials), exclude episodes that have airing metadata
+                // (they logically belong to another season)
+                if (seasonNumber.HasValue && seasonNumber.Value == 0
+                    && (episodeItem.AirsBeforeSeasonNumber.HasValue
+                        || episodeItem.AirsAfterSeasonNumber.HasValue
+                        || episodeItem.AirsBeforeEpisodeNumber.HasValue))
+                {
+                    return false;
+                }
+
                 var currentSeasonNumber = supportSpecialsInSeason ? episodeItem.AiredSeasonNumber : episode.ParentIndexNumber;
                 if (currentSeasonNumber.HasValue && seasonNumber.HasValue && currentSeasonNumber.Value == seasonNumber.Value)
                 {
@@ -470,7 +482,24 @@ namespace MediaBrowser.Controller.Entities.TV
         {
             if (!includeSpecials || seasonNumber < 1)
             {
-                return episodes.Where(i => (i.ParentIndexNumber ?? -1) == seasonNumber);
+                return episodes.Where(i =>
+                {
+                    if ((i.ParentIndexNumber ?? -1) != seasonNumber)
+                    {
+                        return false;
+                    }
+
+                    // For Season 0 (Specials), exclude episodes that have airing metadata
+                    if (seasonNumber == 0
+                        && (i.AirsBeforeSeasonNumber.HasValue
+                            || i.AirsAfterSeasonNumber.HasValue
+                            || i.AirsBeforeEpisodeNumber.HasValue))
+                    {
+                        return false;
+                    }
+
+                    return true;
+                });
             }
 
             return episodes.Where(i =>
@@ -503,6 +532,53 @@ namespace MediaBrowser.Controller.Entities.TV
             var info = GetItemLookupInfo<SeriesInfo>();
 
             return info;
+        }
+
+        /// <summary>
+        /// Reorders a list of seasons so that Season 0 (Specials) appears last.
+        /// Hides Season 0 entirely if all its episodes have airing metadata
+        /// (i.e. they logically belong to other seasons).
+        /// </summary>
+        private IReadOnlyList<BaseItem> ReorderSeasonsSpecialsLast(IReadOnlyList<BaseItem> seasons)
+        {
+            var reordered = new List<BaseItem>(seasons.Count);
+            List<BaseItem> specials = null;
+
+            foreach (var season in seasons)
+            {
+                if (season.IndexNumber == 0)
+                {
+                    specials ??= new List<BaseItem>();
+                    specials.Add(season);
+                }
+                else
+                {
+                    reordered.Add(season);
+                }
+            }
+
+            if (specials is not null)
+            {
+                foreach (var special in specials)
+                {
+                    if (HasOrphanSpecials((Season)special))
+                    {
+                        reordered.Add(special);
+                    }
+                }
+            }
+
+            return reordered;
+        }
+
+        /// <summary>
+        /// Checks whether a Specials season has any episodes without airing metadata
+        /// (episodes that don't belong to any other season).
+        /// </summary>
+        private bool HasOrphanSpecials(Season specialSeason)
+        {
+            var episodes = specialSeason.GetEpisodes(this, null, new DtoOptions(false), true);
+            return episodes.Count > 0;
         }
 
         public override bool BeforeMetadataRefresh(bool replaceAllMetadata)
