@@ -2791,12 +2791,23 @@ namespace Emby.Server.Implementations.Library
 
                 if (!episode.ParentIndexNumber.HasValue || forceRefresh)
                 {
-                    if (episode.ParentIndexNumber != episodeInfo.SeasonNumber)
+                    // When the parent season has an AniDB ID, the season represents an
+                    // explicit user mapping. Use the season's own IndexNumber instead of
+                    // the filename-extracted season number (which reflects AniDB's own
+                    // numbering rather than the library's season structure).
+                    var season = episode.Season;
+                    var seasonNumber = season is not null
+                        && season.ProviderIds.ContainsKey("AniDB")
+                        && season.IndexNumber.HasValue
+                            ? season.IndexNumber
+                            : episodeInfo.SeasonNumber;
+
+                    if (episode.ParentIndexNumber != seasonNumber)
                     {
                         changed = true;
                     }
 
-                    episode.ParentIndexNumber = episodeInfo.SeasonNumber;
+                    episode.ParentIndexNumber = seasonNumber;
                 }
             }
 
