@@ -124,20 +124,37 @@ public class SeriesMetadataService : MetadataService<Series, SeriesInfo>
             }
         }
 
+        // Collect season numbers referenced by episodes so we don't delete a
+        // virtual season that CreateSeasonsAsync would immediately recreate.
+        var referencedSeasonNumbers = series.GetRecursiveChildren(i => i is Episode)
+            .OfType<Episode>()
+            .Where(e => e.ParentIndexNumber.HasValue)
+            .Select(e => e.ParentIndexNumber!.Value)
+            .ToHashSet();
+
         foreach (var virtualSeason in virtualSeasons)
         {
             var seasonNumber = virtualSeason.IndexNumber;
-            // If there's a physical season with the same number or no episodes in the season, delete it
-            if ((seasonNumber.HasValue && physicalSeasonNumbers.Contains(seasonNumber.Value))
-                || virtualSeason.GetEpisodes().Count == 0)
+
+            // If there's a physical season with the same number, delete the virtual duplicate
+            var isPhysicalDuplicate = seasonNumber.HasValue && physicalSeasonNumbers.Contains(seasonNumber.Value);
+
+            // If no episodes reference this season at all, it's truly obsolete
+            var isUnreferenced = virtualSeason.GetEpisodes().Count == 0
+                && !(seasonNumber.HasValue && referencedSeasonNumbers.Contains(seasonNumber.Value));
+
+            if (isPhysicalDuplicate || isUnreferenced)
             {
-                Logger.LogInformation("Removing virtual season {SeasonNumber} in series {SeriesName}", virtualSeason.IndexNumber, series.Name);
+                Logger.LogInformation(
+                    "Removing virtual season {SeasonNumber} in series {SeriesName} ({RemoveReason})",
+                    virtualSeason.IndexNumber,
+                    series.Name,
+                    isPhysicalDuplicate ? "physical duplicate exists" : "no episodes");
 
                 LibraryManager.DeleteItem(
                     virtualSeason,
                     new DeleteOptions
                     {
-                        // Internal metadata paths are removed regardless of this.
                         DeleteFileLocation = false
                     },
                     false);

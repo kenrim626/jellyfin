@@ -801,7 +801,11 @@ namespace MediaBrowser.MediaEncoding.Encoder
                     var timeoutMs = _configurationManager.Configuration.ImageExtractionTimeoutMs;
                     if (timeoutMs <= 0)
                     {
-                        timeoutMs = enableHdrExtraction ? DefaultHdrImageExtractionTimeout : DefaultSdrImageExtractionTimeout;
+                        // HEVC decoding is inherently slow even for SDR content,
+                        // use the longer HDR timeout for any HEVC/AV1 stream.
+                        var isSlowCodec = string.Equals(videoStream?.Codec, "hevc", StringComparison.OrdinalIgnoreCase)
+                            || string.Equals(videoStream?.Codec, "av1", StringComparison.OrdinalIgnoreCase);
+                        timeoutMs = (enableHdrExtraction || isSlowCodec) ? DefaultHdrImageExtractionTimeout : DefaultSdrImageExtractionTimeout;
                     }
 
                     try
