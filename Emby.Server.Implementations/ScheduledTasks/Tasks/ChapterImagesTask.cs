@@ -135,6 +135,8 @@ public class ChapterImagesTask : IScheduledTask
             {
                 var chapters = _chapterManager.GetChapters(video.Id);
 
+                _logger.LogInformation("Extracting chapter images for '{VideoName}' ({ChapterCount} chapters) [{Index}/{Total}]", video.Name, chapters.Count, numComplete + 1, videos.Count);
+
                 var success = await _chapterManager.RefreshChapterImages(video, directoryService, chapters, extract, true, cancellationToken).ConfigureAwait(false);
 
                 if (!success)

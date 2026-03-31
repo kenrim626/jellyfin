@@ -1050,6 +1050,8 @@ namespace MediaBrowser.Providers.Manager
                         continue;
                     }
 
+                    _logger.LogInformation("Processing queued refresh for {Type} '{Name}' (id={Id})", item.GetType().Name, item.Name, item.Id);
+
                     var task = item is MusicArtist artist
                         ? RefreshArtist(artist, refreshItem.RefreshOptions, cancellationToken)
                         : RefreshItem(item, refreshItem.RefreshOptions, cancellationToken);

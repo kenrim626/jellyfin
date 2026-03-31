@@ -18,6 +18,7 @@ using MediaBrowser.Controller.Dto;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.Entities;
 using MediaBrowser.Model.Querying;
+using Microsoft.Extensions.Logging;
 using MetadataProvider = MediaBrowser.Model.Entities.MetadataProvider;
 
 namespace MediaBrowser.Controller.Entities.TV
@@ -315,6 +316,11 @@ namespace MediaBrowser.Controller.Entities.TV
 
             var totalItems = items.Count;
             var numComplete = 0;
+            var seasonCount = items.Count(i => i is Season);
+            var episodeCount = totalItems - seasonCount;
+            var seriesStopwatch = Stopwatch.StartNew();
+
+            Logger.LogInformation("Starting full metadata refresh for series '{Name}': {SeasonCount} seasons, {EpisodeCount} episodes", Name, seasonCount, episodeCount);
 
             // Refresh seasons
             foreach (var item in items)
@@ -328,6 +334,7 @@ namespace MediaBrowser.Controller.Entities.TV
 
                 if (refreshOptions.RefreshItem(item))
                 {
+                    Logger.LogInformation("Refreshing season '{SeasonName}' of '{SeriesName}'", item.Name, Name);
                     await item.RefreshMetadata(refreshOptions, cancellationToken).ConfigureAwait(false);
                 }
 
@@ -359,6 +366,7 @@ namespace MediaBrowser.Controller.Entities.TV
                 {
                     if (refreshOptions.RefreshItem(item))
                     {
+                        Logger.LogDebug("Refreshing episode '{EpisodeName}' of '{SeriesName}'", item.Name, Name);
                         await item.RefreshMetadata(refreshOptions, cancellationToken).ConfigureAwait(false);
                     }
                 }
@@ -369,8 +377,12 @@ namespace MediaBrowser.Controller.Entities.TV
                 progress.Report(percent * 100);
             }
 
+            Logger.LogInformation("Refreshing series '{Name}' metadata (self)", Name);
             refreshOptions = new MetadataRefreshOptions(refreshOptions);
             await ProviderManager.RefreshSingleItem(this, refreshOptions, cancellationToken).ConfigureAwait(false);
+
+            seriesStopwatch.Stop();
+            Logger.LogInformation("Completed full metadata refresh for series '{Name}' in {ElapsedSec:F1}s", Name, seriesStopwatch.Elapsed.TotalSeconds);
         }
 
         public List<BaseItem> GetSeasonEpisodes(Season parentSeason, User user, DtoOptions options, bool shouldIncludeMissingEpisodes)
