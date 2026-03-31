@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
@@ -90,6 +91,8 @@ namespace MediaBrowser.Providers.Manager
         {
             var itemOfType = (TItemType)item;
             var updateType = ItemUpdateType.None;
+            var refreshStopwatch = Stopwatch.StartNew();
+            Logger.LogInformation("Refreshing metadata for {Type} '{Name}' (mode={Mode})", typeof(TItemType).Name, item.Name, refreshOptions.MetadataRefreshMode);
 
             var libraryOptions = LibraryManager.GetLibraryOptions(item);
             var isFirstRefresh = item.DateLastRefreshed == DateTime.MinValue;
@@ -218,6 +221,9 @@ namespace MediaBrowser.Providers.Manager
             updateType = await SaveInternal(item, refreshOptions, updateType, isFirstRefresh, requiresRefresh, metadataResult, cancellationToken).ConfigureAwait(false);
 
             await AfterMetadataRefresh(itemOfType, refreshOptions, cancellationToken).ConfigureAwait(false);
+
+            refreshStopwatch.Stop();
+            Logger.LogInformation("Completed metadata refresh for {Type} '{Name}' in {ElapsedMs}ms (update={UpdateType})", typeof(TItemType).Name, item.Name, refreshStopwatch.ElapsedMilliseconds, updateType);
 
             return updateType;
 
@@ -907,12 +913,14 @@ namespace MediaBrowser.Providers.Manager
             foreach (var provider in providers)
             {
                 var providerName = provider.GetType().Name;
-                Logger.LogDebug("Running {Provider} for {Item}", providerName, logName);
+                Logger.LogInformation("Running remote provider {Provider} for '{Item}'", providerName, logName);
+                var providerStopwatch = Stopwatch.StartNew();
 
                 try
                 {
                     var result = await provider.GetMetadata(id, cancellationToken).ConfigureAwait(false);
 
+                    providerStopwatch.Stop();
                     if (result.HasMetadata)
                     {
                         result.Provider = provider.Name;
@@ -921,10 +929,11 @@ namespace MediaBrowser.Providers.Manager
                         MergeNewData(temp.Item, id);
 
                         refreshResult.UpdateType |= ItemUpdateType.MetadataDownload;
+                        Logger.LogInformation("{Provider} returned metadata for '{Item}' in {ElapsedMs}ms", providerName, logName, providerStopwatch.ElapsedMilliseconds);
                     }
                     else
                     {
-                        Logger.LogDebug("{Provider} returned no metadata for {Item}", providerName, logName);
+                        Logger.LogInformation("{Provider} returned no metadata for '{Item}' in {ElapsedMs}ms", providerName, logName, providerStopwatch.ElapsedMilliseconds);
                     }
                 }
                 catch (OperationCanceledException)
@@ -935,7 +944,7 @@ namespace MediaBrowser.Providers.Manager
                 {
                     refreshResult.Failures++;
                     refreshResult.ErrorMessage = ex.Message;
-                    Logger.LogError(ex, "Error in {Provider}", provider.Name);
+                    Logger.LogError(ex, "Error in {Provider} for '{Item}' after {ElapsedMs}ms", provider.Name, logName, providerStopwatch.ElapsedMilliseconds);
                 }
             }
 
