@@ -180,6 +180,11 @@ namespace MediaBrowser.Controller.Entities.TV
                 list = newList;
             }
 
+            if (this.TryGetProviderId("AniDB", out var anidbEpId))
+            {
+                list.Insert(0, "anidb-ep-" + anidbEpId);
+            }
+
             return list;
         }
 

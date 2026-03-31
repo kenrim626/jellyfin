@@ -238,9 +238,40 @@ namespace Emby.Server.Implementations.Library
         /// <inheritdoc />
         public UserItemData? GetUserData(User user, BaseItem item)
         {
-            return item.UserData?.Where(e => e.UserId.Equals(user.Id)).Select(Map).FirstOrDefault() ?? new UserItemData()
+            var existing = item.UserData?.Where(e => e.UserId.Equals(user.Id)).Select(Map).FirstOrDefault();
+            if (existing is not null)
             {
-                Key = item.GetUserDataKeys()[0],
+                return existing;
+            }
+
+            // Cross-item fallback: look for user data saved under provider-based keys
+            // on a different item (e.g. after a file was replaced/renamed).
+            var keys = item.GetUserDataKeys();
+            var providerKeys = keys.Where(k => !Guid.TryParse(k, out _)).ToList();
+            if (providerKeys.Count > 0)
+            {
+                using var dbContext = _repository.CreateDbContext();
+                var recovered = dbContext.UserData
+                    .AsNoTracking()
+                    .Where(e => e.UserId.Equals(user.Id)
+                                && e.ItemId != item.Id
+                                && providerKeys.Contains(e.CustomDataKey))
+                    .OrderByDescending(e => e.LastPlayedDate)
+                    .FirstOrDefault();
+
+                if (recovered is not null && (recovered.Played || recovered.PlaybackPositionTicks > 0 || recovered.PlayCount > 0))
+                {
+                    var recoveredData = Map(recovered);
+
+                    // Migrate to the new item so future lookups are direct.
+                    SaveUserData(user, item, recoveredData, UserDataSaveReason.Import, CancellationToken.None);
+                    return recoveredData;
+                }
+            }
+
+            return new UserItemData()
+            {
+                Key = keys[0],
             };
         }
 
