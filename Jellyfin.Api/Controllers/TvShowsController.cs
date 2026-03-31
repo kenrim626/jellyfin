@@ -70,6 +70,7 @@ public class TvShowsController : BaseJellyfinApiController
     /// <param name="enableTotalRecordCount">Whether to enable the total records count. Defaults to true.</param>
     /// <param name="enableResumable">Whether to include resumable episodes in next up results.</param>
     /// <param name="enableRewatching">Whether to include watched episodes in next up results.</param>
+    /// <param name="useEarliestUnwatchedOrder">Whether to use earliest unwatched episode order instead of next after last watched.</param>
     /// <returns>A <see cref="QueryResult{BaseItemDto}"/> with the next up episodes.</returns>
     [HttpGet("NextUp")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -87,7 +88,8 @@ public class TvShowsController : BaseJellyfinApiController
         [FromQuery] DateTime? nextUpDateCutoff,
         [FromQuery] bool enableTotalRecordCount = true,
         [FromQuery] bool enableResumable = true,
-        [FromQuery] bool enableRewatching = false)
+        [FromQuery] bool enableRewatching = false,
+        [FromQuery] bool useEarliestUnwatchedOrder = false)
     {
         var user = _userManager.GetUserById(RequestHelpers.GetUserId(User, userId));
         if (user is null)
@@ -109,7 +111,8 @@ public class TvShowsController : BaseJellyfinApiController
                 EnableTotalRecordCount = enableTotalRecordCount,
                 NextUpDateCutoff = nextUpDateCutoff ?? DateTime.MinValue,
                 EnableResumable = enableResumable,
-                EnableRewatching = enableRewatching
+                EnableRewatching = enableRewatching,
+                UseEarliestUnwatchedOrder = useEarliestUnwatchedOrder
             },
             options);
 

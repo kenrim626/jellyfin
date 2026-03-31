@@ -15,6 +15,7 @@ public class NextUpQuery
         NextUpDateCutoff = DateTime.MinValue;
         EnableResumable = false;
         EnableRewatching = false;
+        UseEarliestUnwatchedOrder = false;
     }
 
     /// <summary>
@@ -69,4 +70,10 @@ public class NextUpQuery
     /// Gets or sets a value indicating whether getting rewatching next up list.
     /// </summary>
     public bool EnableRewatching { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether to use earliest unwatched episode order
+    /// instead of next episode after last watched.
+    /// </summary>
+    public bool UseEarliestUnwatchedOrder { get; set; }
 }
