@@ -77,6 +77,12 @@ namespace Emby.Server.Implementations.Sorting
         {
             // http://thetvdb.com/wiki/index.php?title=Special_Episodes
 
+            // Unconfigured specials (no airing metadata) sort after all regular episodes
+            if (!y.AirsAfterSeasonNumber.HasValue && !y.AirsBeforeSeasonNumber.HasValue && !y.AirsBeforeEpisodeNumber.HasValue)
+            {
+                return -1;
+            }
+
             var xSeason = x.ParentIndexNumber ?? -1;
             var ySeason = y.AirsAfterSeasonNumber ?? y.AirsBeforeSeasonNumber ?? -1;
 
@@ -145,9 +151,26 @@ namespace Emby.Server.Implementations.Sorting
 
         private static int CompareEpisodes(Episode x, Episode y)
         {
-            var xValue = ((x.ParentIndexNumber ?? -1) * 1000) + (x.IndexNumber ?? -1);
-            var yValue = ((y.ParentIndexNumber ?? -1) * 1000) + (y.IndexNumber ?? -1);
-            var comparisonResult = xValue.CompareTo(yValue);
+            // Episodes with an assigned season come before those without
+            if (x.ParentIndexNumber.HasValue != y.ParentIndexNumber.HasValue)
+            {
+                return x.ParentIndexNumber.HasValue ? -1 : 1;
+            }
+
+            var seasonComparison = (x.ParentIndexNumber ?? 0).CompareTo(y.ParentIndexNumber ?? 0);
+            if (seasonComparison != 0)
+            {
+                return seasonComparison;
+            }
+
+            // Episodes with an assigned index number come before those without
+            if (x.IndexNumber.HasValue != y.IndexNumber.HasValue)
+            {
+                return x.IndexNumber.HasValue ? -1 : 1;
+            }
+
+            var comparisonResult = (x.IndexNumber ?? 0).CompareTo(y.IndexNumber ?? 0);
+
             // If equal, compare premiere dates
             if (comparisonResult == 0 && x.PremiereDate.HasValue && y.PremiereDate.HasValue)
             {

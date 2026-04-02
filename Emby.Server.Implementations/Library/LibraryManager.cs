@@ -2791,16 +2791,22 @@ namespace Emby.Server.Implementations.Library
 
                 if (!episode.ParentIndexNumber.HasValue || forceRefresh)
                 {
-                    // When the parent season has an AniDB ID, the season represents an
-                    // explicit user mapping. Use the season's own IndexNumber instead of
-                    // the filename-extracted season number (which reflects AniDB's own
-                    // numbering rather than the library's season structure).
+                    // If the filename/path explicitly indicates Season 0 (e.g. S00E01
+                    // or Specials folder), preserve that — it means the file is
+                    // intentionally marked as a special regardless of season mappings.
+                    // Otherwise, when the parent season has an AniDB ID, the season
+                    // represents an explicit user mapping. Use the season's own
+                    // IndexNumber instead of the filename-extracted season number
+                    // (which reflects AniDB's own numbering rather than the library's
+                    // season structure).
                     var season = episode.Season;
-                    var seasonNumber = season is not null
-                        && season.ProviderIds.ContainsKey("AniDB")
-                        && season.IndexNumber.HasValue
-                            ? season.IndexNumber
-                            : episodeInfo.SeasonNumber;
+                    var seasonNumber = episodeInfo.SeasonNumber == 0
+                        ? 0
+                        : season is not null
+                            && season.ProviderIds.ContainsKey("AniDB")
+                            && season.IndexNumber.HasValue
+                                ? season.IndexNumber
+                                : episodeInfo.SeasonNumber;
 
                     if (episode.ParentIndexNumber != seasonNumber)
                     {

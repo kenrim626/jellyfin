@@ -297,15 +297,52 @@ namespace MediaBrowser.Controller.Entities.TV
 
             var allSeriesEpisodes = allItems.OfType<Episode>().ToList();
 
-            var allEpisodes = allItems.OfType<Season>()
-                .SelectMany(i => i.GetEpisodes(this, user, allSeriesEpisodes, options, shouldIncludeMissingEpisodes))
-                .Reverse();
+            // Iterate regular seasons first, then Season 0 (Specials) last.
+            // Specials with airing metadata (AirsBeforeSeason etc.) are already placed
+            // into their aired season by FilterEpisodesBySeason + AiredEpisodeOrderComparer,
+            // so they naturally deduplicate when we skip already-seen episode IDs.
+            var seasons = allItems.OfType<Season>().ToList();
+            var regularSeasons = new List<Season>();
+            var specialSeasons = new List<Season>();
 
-            // Specials could appear twice based on above - once in season 0, once in the aired season
-            // This depends on settings for that series
-            // When this happens, remove the duplicate from season 0
+            foreach (var season in seasons)
+            {
+                if (season.IndexNumber == 0)
+                {
+                    specialSeasons.Add(season);
+                }
+                else
+                {
+                    regularSeasons.Add(season);
+                }
+            }
 
-            return allEpisodes.DistinctBy(i => i.Id).Reverse();
+            var result = new List<BaseItem>();
+            var seenIds = new HashSet<Guid>();
+
+            foreach (var season in regularSeasons)
+            {
+                foreach (var episode in season.GetEpisodes(this, user, allSeriesEpisodes, options, shouldIncludeMissingEpisodes))
+                {
+                    if (seenIds.Add(episode.Id))
+                    {
+                        result.Add(episode);
+                    }
+                }
+            }
+
+            foreach (var season in specialSeasons)
+            {
+                foreach (var episode in season.GetEpisodes(this, user, allSeriesEpisodes, options, shouldIncludeMissingEpisodes))
+                {
+                    if (seenIds.Add(episode.Id))
+                    {
+                        result.Add(episode);
+                    }
+                }
+            }
+
+            return result;
         }
 
         public async Task RefreshAllMetadata(MetadataRefreshOptions refreshOptions, IProgress<double> progress, CancellationToken cancellationToken)

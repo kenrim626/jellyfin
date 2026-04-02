@@ -81,32 +81,33 @@ namespace Jellyfin.Server.Implementations.Tests.Sorting
                     new Episode { ParentIndexNumber = 0, IndexNumber = 1 },
                     1);
 
-                // Specials to Episodes
+                // Unconfigured specials sort after regular episodes
                 Add(
                     new Episode { ParentIndexNumber = 1, IndexNumber = 1 },
                     new Episode { ParentIndexNumber = 0, IndexNumber = 1 },
-                    1);
-
-                Add(
-                    new Episode { ParentIndexNumber = 1, IndexNumber = 1 },
-                    new Episode { ParentIndexNumber = 0, IndexNumber = 2 },
-                    1);
-
-                Add(
-                    new Episode { ParentIndexNumber = 1, IndexNumber = 2 },
-                    new Episode { ParentIndexNumber = 0, IndexNumber = 1 },
-                    1);
-
-                Add(
-                    new Episode { ParentIndexNumber = 1, IndexNumber = 2 },
-                    new Episode { ParentIndexNumber = 0, IndexNumber = 1 },
-                    1);
+                    -1);
 
                 Add(
                     new Episode { ParentIndexNumber = 1, IndexNumber = 1 },
                     new Episode { ParentIndexNumber = 0, IndexNumber = 2 },
-                    1);
+                    -1);
 
+                Add(
+                    new Episode { ParentIndexNumber = 1, IndexNumber = 2 },
+                    new Episode { ParentIndexNumber = 0, IndexNumber = 1 },
+                    -1);
+
+                Add(
+                    new Episode { ParentIndexNumber = 1, IndexNumber = 2 },
+                    new Episode { ParentIndexNumber = 0, IndexNumber = 1 },
+                    -1);
+
+                Add(
+                    new Episode { ParentIndexNumber = 1, IndexNumber = 1 },
+                    new Episode { ParentIndexNumber = 0, IndexNumber = 2 },
+                    -1);
+
+                // Configured specials keep their airing position
                 Add(
                     new Episode { ParentIndexNumber = 0, IndexNumber = 1, AirsAfterSeasonNumber = 1 },
                     new Episode { ParentIndexNumber = 1, IndexNumber = 1 },
