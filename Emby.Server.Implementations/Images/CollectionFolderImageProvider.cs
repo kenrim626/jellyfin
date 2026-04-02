@@ -33,9 +33,6 @@ namespace Emby.Server.Implementations.Images
 
             switch (viewType)
             {
-                case CollectionType.movies:
-                    includeItemTypes = new[] { BaseItemKind.Movie };
-                    break;
                 case CollectionType.tvshows:
                     includeItemTypes = new[] { BaseItemKind.Series };
                     break;
@@ -48,15 +45,11 @@ namespace Emby.Server.Implementations.Images
                 case CollectionType.books:
                     includeItemTypes = new[] { BaseItemKind.Book, BaseItemKind.AudioBook };
                     break;
-                case CollectionType.boxsets:
-                    includeItemTypes = new[] { BaseItemKind.BoxSet };
-                    break;
-                case CollectionType.homevideos:
                 case CollectionType.photos:
                     includeItemTypes = new[] { BaseItemKind.Video, BaseItemKind.Photo };
                     break;
                 default:
-                    includeItemTypes = new[] { BaseItemKind.Video, BaseItemKind.Audio, BaseItemKind.Photo, BaseItemKind.Movie, BaseItemKind.Series };
+                    includeItemTypes = new[] { BaseItemKind.Video, BaseItemKind.Audio, BaseItemKind.Photo, BaseItemKind.Series };
                     break;
             }
 

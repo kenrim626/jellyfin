@@ -1,7 +1,6 @@
 #pragma warning disable CS1591
 
 using MediaBrowser.Controller.Entities;
-using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.Entities;
@@ -23,7 +22,7 @@ namespace MediaBrowser.Providers.Movies
         /// <inheritdoc />
         public bool Supports(IHasProviderIds item)
         {
-            return item is Movie || item is MusicVideo || item is Series || item is Episode || item is Trailer;
+            return item is MusicVideo || item is Series || item is Episode;
         }
     }
 }

@@ -1,5 +1,5 @@
 using MediaBrowser.Common.Configuration;
-using MediaBrowser.Controller.Entities.Movies;
+using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.IO;
@@ -10,7 +10,7 @@ namespace MediaBrowser.XbmcMetadata.Providers
     /// <summary>
     /// Nfo provider for movies.
     /// </summary>
-    public class MovieNfoProvider : BaseVideoNfoProvider<Movie>
+    public class MovieNfoProvider : BaseVideoNfoProvider<Video>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="MovieNfoProvider"/> class.

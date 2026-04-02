@@ -92,16 +92,14 @@ namespace Emby.Server.Implementations.Library
                 }
             }
 
-            foreach (var viewType in new[] { CollectionType.movies, CollectionType.tvshows })
+            foreach (var viewType in new[] { CollectionType.tvshows })
             {
                 var parents = groupedFolders.Where(i => i.CollectionType == viewType || i.CollectionType is null)
                     .ToList();
 
                 if (parents.Count > 0)
                 {
-                    var localizationKey = viewType == CollectionType.tvshows
-                        ? "TvShows"
-                        : "Movies";
+                    var localizationKey = "TvShows";
 
                     list.Add(GetUserView(parents, viewType, localizationKey, string.Empty, user, query.PresetViews));
                 }
@@ -291,11 +289,7 @@ namespace Emby.Server.Implementations.Library
                 var hasCollectionType = parents.OfType<UserView>().ToList();
                 if (hasCollectionType.Count > 0)
                 {
-                    if (hasCollectionType.All(i => i.CollectionType == CollectionType.movies))
-                    {
-                        includeItemTypes = new[] { BaseItemKind.Movie };
-                    }
-                    else if (hasCollectionType.All(i => i.CollectionType == CollectionType.tvshows))
+                    if (hasCollectionType.All(i => i.CollectionType == CollectionType.tvshows))
                     {
                         includeItemTypes = new[] { BaseItemKind.Episode };
                     }
@@ -319,10 +313,6 @@ namespace Emby.Server.Implementations.Library
                             tmpMediaTypes.Add(MediaType.Audio);
                             break;
                         case CollectionType.photos:
-                            tmpMediaTypes.Add(MediaType.Photo);
-                            tmpMediaTypes.Add(MediaType.Video);
-                            break;
-                        case CollectionType.homevideos:
                             tmpMediaTypes.Add(MediaType.Photo);
                             tmpMediaTypes.Add(MediaType.Video);
                             break;

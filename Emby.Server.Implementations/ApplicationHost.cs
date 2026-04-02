@@ -844,7 +844,7 @@ namespace Emby.Server.Implementations
             yield return typeof(MediaBrowser.MediaEncoding.Encoder.MediaEncoder).Assembly;
 
             // Local metadata
-            yield return typeof(BoxSetXmlSaver).Assembly;
+            yield return typeof(PlaylistXmlSaver).Assembly;
 
             // Xbmc
             yield return typeof(ArtistNfoProvider).Assembly;

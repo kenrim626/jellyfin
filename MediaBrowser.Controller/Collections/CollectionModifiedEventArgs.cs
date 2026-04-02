@@ -3,13 +3,12 @@
 using System;
 using System.Collections.Generic;
 using MediaBrowser.Controller.Entities;
-using MediaBrowser.Controller.Entities.Movies;
 
 namespace MediaBrowser.Controller.Collections
 {
     public class CollectionModifiedEventArgs : EventArgs
     {
-        public CollectionModifiedEventArgs(BoxSet collection, IReadOnlyCollection<BaseItem> itemsChanged)
+        public CollectionModifiedEventArgs(Folder collection, IReadOnlyCollection<BaseItem> itemsChanged)
         {
             Collection = collection;
             ItemsChanged = itemsChanged;
@@ -19,7 +18,7 @@ namespace MediaBrowser.Controller.Collections
         /// Gets or sets the collection.
         /// </summary>
         /// <value>The collection.</value>
-        public BoxSet Collection { get; set; }
+        public Folder Collection { get; set; }
 
         /// <summary>
         /// Gets or sets the items changed.

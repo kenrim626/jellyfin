@@ -8,7 +8,6 @@ using Jellyfin.Database.Implementations.Entities;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Controller.Collections;
 using MediaBrowser.Controller.Entities;
-using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.Configuration;
@@ -102,7 +101,7 @@ namespace Emby.Server.Implementations.Collections
 
             var name = _localizationManager.GetLocalizedString("Collections");
 
-            await _libraryManager.AddVirtualFolder(name, CollectionTypeOptions.boxsets, libraryOptions, true).ConfigureAwait(false);
+            await _libraryManager.AddVirtualFolder(name, CollectionTypeOptions.mixed, libraryOptions, true).ConfigureAwait(false);
 
             _libraryManager.RootFolder.Children = null;
 
@@ -120,17 +119,17 @@ namespace Emby.Server.Implementations.Collections
             return EnsureLibraryFolder(GetCollectionsFolderPath(), createIfNeeded);
         }
 
-        private IEnumerable<BoxSet> GetCollections(User user)
+        private IEnumerable<Folder> GetCollections(User user)
         {
             var folder = GetCollectionsFolder(false).GetAwaiter().GetResult();
 
             return folder is null
-                ? Enumerable.Empty<BoxSet>()
-                : folder.GetChildren(user, true).OfType<BoxSet>();
+                ? Enumerable.Empty<Folder>()
+                : folder.GetChildren(user, true).OfType<Folder>();
         }
 
         /// <inheritdoc />
-        public async Task<BoxSet> CreateCollectionAsync(CollectionCreationOptions options)
+        public async Task<Folder> CreateCollectionAsync(CollectionCreationOptions options)
         {
             var name = options.Name;
 
@@ -153,7 +152,7 @@ namespace Emby.Server.Implementations.Collections
             try
             {
                 var info = Directory.CreateDirectory(path);
-                var collection = new BoxSet
+                var collection = new Folder
                 {
                     Name = name,
                     Path = path,
@@ -204,7 +203,7 @@ namespace Emby.Server.Implementations.Collections
 
         private async Task AddToCollectionAsync(Guid collectionId, IEnumerable<Guid> ids, bool fireEvent, MetadataRefreshOptions refreshOptions)
         {
-            if (_libraryManager.GetItemById(collectionId) is not BoxSet collection)
+            if (_libraryManager.GetItemById(collectionId) is not Folder collection)
             {
                 throw new ArgumentException("No collection exists with the supplied collectionId " + collectionId);
             }
@@ -260,7 +259,7 @@ namespace Emby.Server.Implementations.Collections
         /// <inheritdoc />
         public async Task RemoveFromCollectionAsync(Guid collectionId, IEnumerable<Guid> itemIds)
         {
-            if (_libraryManager.GetItemById(collectionId) is not BoxSet collection)
+            if (_libraryManager.GetItemById(collectionId) is not Folder collection)
             {
                 throw new ArgumentException("No collection exists with the supplied Id");
             }
@@ -308,62 +307,7 @@ namespace Emby.Server.Implementations.Collections
         /// <inheritdoc />
         public IEnumerable<BaseItem> CollapseItemsWithinBoxSets(IEnumerable<BaseItem> items, User user)
         {
-            var results = new Dictionary<Guid, BaseItem>();
-
-            var allBoxSets = GetCollections(user).ToList();
-
-            foreach (var item in items)
-            {
-                if (item is ISupportsBoxSetGrouping)
-                {
-                    var itemId = item.Id;
-
-                    var itemIsInBoxSet = false;
-                    foreach (var boxSet in allBoxSets)
-                    {
-                        if (!boxSet.ContainsLinkedChildByItemId(itemId))
-                        {
-                            continue;
-                        }
-
-                        itemIsInBoxSet = true;
-
-                        results.TryAdd(boxSet.Id, boxSet);
-                    }
-
-                    // skip any item that is in a box set
-                    if (itemIsInBoxSet)
-                    {
-                        continue;
-                    }
-
-                    var alreadyInResults = false;
-
-                    // this is kind of a performance hack because only Video has alternate versions that should be in a box set?
-                    if (item is Video video)
-                    {
-                        foreach (var childId in video.GetLocalAlternateVersionIds())
-                        {
-                            if (!results.ContainsKey(childId))
-                            {
-                                continue;
-                            }
-
-                            alreadyInResults = true;
-                            break;
-                        }
-                    }
-
-                    if (alreadyInResults)
-                    {
-                        continue;
-                    }
-                }
-
-                results[item.Id] = item;
-            }
-
-            return results.Values;
+            return items;
         }
     }
 }

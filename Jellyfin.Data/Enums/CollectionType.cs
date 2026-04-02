@@ -14,11 +14,6 @@ public enum CollectionType
     unknown = 0,
 
     /// <summary>
-    /// Movies collection.
-    /// </summary>
-    movies = 1,
-
-    /// <summary>
     /// Tv shows collection.
     /// </summary>
     tvshows = 2,
@@ -32,21 +27,6 @@ public enum CollectionType
     /// Music videos collection.
     /// </summary>
     musicvideos = 4,
-
-    /// <summary>
-    /// Trailers collection.
-    /// </summary>
-    trailers = 5,
-
-    /// <summary>
-    /// Home videos collection.
-    /// </summary>
-    homevideos = 6,
-
-    /// <summary>
-    /// Box sets collection.
-    /// </summary>
-    boxsets = 7,
 
     /// <summary>
     /// Books collection.
@@ -114,47 +94,5 @@ public enum CollectionType
     /// Tv favorite episodes collection.
     /// </summary>
     [OpenApiIgnoreEnum]
-    tvfavoriteepisodes = 108,
-
-    /// <summary>
-    /// Latest movies collection.
-    /// </summary>
-    [OpenApiIgnoreEnum]
-    movielatest = 109,
-
-    /// <summary>
-    /// Movies to resume collection.
-    /// </summary>
-    [OpenApiIgnoreEnum]
-    movieresume = 110,
-
-    /// <summary>
-    /// Movie movie collection.
-    /// </summary>
-    [OpenApiIgnoreEnum]
-    moviemovies = 111,
-
-    /// <summary>
-    /// Movie collections collection.
-    /// </summary>
-    [OpenApiIgnoreEnum]
-    moviecollection = 112,
-
-    /// <summary>
-    /// Movie favorites collection.
-    /// </summary>
-    [OpenApiIgnoreEnum]
-    moviefavorites = 113,
-
-    /// <summary>
-    /// Movie genres collection.
-    /// </summary>
-    [OpenApiIgnoreEnum]
-    moviegenres = 114,
-
-    /// <summary>
-    /// Movie genre collection.
-    /// </summary>
-    [OpenApiIgnoreEnum]
-    moviegenre = 115
+    tvfavoriteepisodes = 108
 }

@@ -12,7 +12,6 @@ using MediaBrowser.Common.Configuration;
 using MediaBrowser.Controller.Chapters;
 using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Entities;
-using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.MediaEncoding;
@@ -565,10 +564,8 @@ namespace MediaBrowser.Providers.MediaInfo
                 skipIfEmbeddedSubtitlesPresent = subtitleOptions.SkipIfEmbeddedSubtitlesPresent;
                 skipIfAudioTrackMatches = subtitleOptions.SkipIfAudioTrackMatches;
                 requirePerfectMatch = subtitleOptions.RequirePerfectMatch;
-                enabled = (subtitleOptions.DownloadEpisodeSubtitles &&
-                video is Episode) ||
-                (subtitleOptions.DownloadMovieSubtitles &&
-                video is Movie);
+                enabled = subtitleOptions.DownloadEpisodeSubtitles &&
+                video is Episode;
             }
             else
             {

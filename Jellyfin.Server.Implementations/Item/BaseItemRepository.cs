@@ -909,11 +909,6 @@ public sealed class BaseItemRepository
         dto.Studios = entity.Studios?.Split('|') ?? [];
         dto.Tags = string.IsNullOrWhiteSpace(entity.Tags) ? [] : entity.Tags.Split('|');
 
-        if (dto is Trailer trailer)
-        {
-            trailer.TrailerTypes = entity.TrailerTypes?.Select(e => (TrailerType)e.Id).ToArray() ?? [];
-        }
-
         if (dto is Video video)
         {
             video.PrimaryVersionId = entity.PrimaryVersionId;
@@ -1087,16 +1082,6 @@ public sealed class BaseItemRepository
         if (dto.ImageInfos is not null)
         {
             entity.Images = dto.ImageInfos.Select(f => Map(dto.Id, f)).ToArray();
-        }
-
-        if (dto is Trailer trailer)
-        {
-            entity.TrailerTypes = trailer.TrailerTypes?.Select(e => new BaseItemTrailerType()
-            {
-                Id = (int)e,
-                Item = entity,
-                ItemId = entity.Id
-            }).ToArray() ?? [];
         }
 
         // dto.Type = entity.Type;

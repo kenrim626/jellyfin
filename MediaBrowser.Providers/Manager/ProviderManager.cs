@@ -19,7 +19,6 @@ using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Dto;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Entities.Audio;
-using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.Lyrics;
 using MediaBrowser.Controller.MediaSegments;
@@ -35,7 +34,6 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Book = MediaBrowser.Controller.Entities.Book;
 using Episode = MediaBrowser.Controller.Entities.TV.Episode;
-using Movie = MediaBrowser.Controller.Entities.Movies.Movie;
 using MusicAlbum = MediaBrowser.Controller.Entities.Audio.MusicAlbum;
 using Season = MediaBrowser.Controller.Entities.TV.Season;
 using Series = MediaBrowser.Controller.Entities.TV.Series;
@@ -519,8 +517,6 @@ namespace MediaBrowser.Providers.Manager
         {
             return new[]
             {
-                GetPluginSummary<Movie>(),
-                GetPluginSummary<BoxSet>(),
                 GetPluginSummary<Book>(),
                 GetPluginSummary<Series>(),
                 GetPluginSummary<Season>(),

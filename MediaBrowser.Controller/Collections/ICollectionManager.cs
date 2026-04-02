@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Jellyfin.Database.Implementations.Entities;
 using MediaBrowser.Controller.Entities;
-using MediaBrowser.Controller.Entities.Movies;
 
 namespace MediaBrowser.Controller.Collections
 {
@@ -30,8 +29,8 @@ namespace MediaBrowser.Controller.Collections
         /// Creates the collection.
         /// </summary>
         /// <param name="options">The options.</param>
-        /// <returns>BoxSet wrapped in an awaitable task.</returns>
-        Task<BoxSet> CreateCollectionAsync(CollectionCreationOptions options);
+        /// <returns>Folder wrapped in an awaitable task.</returns>
+        Task<Folder> CreateCollectionAsync(CollectionCreationOptions options);
 
         /// <summary>
         /// Adds to collection.

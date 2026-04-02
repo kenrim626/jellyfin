@@ -11,7 +11,6 @@ using Jellyfin.Extensions;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Common.Providers;
 using MediaBrowser.Controller.Entities;
-using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Extensions;
 using MediaBrowser.Controller.Library;
@@ -231,14 +230,6 @@ namespace MediaBrowser.XbmcMetadata.Parsers
             if (ProviderIdParsers.TryFindImdbId(xml, out var imdbId))
             {
                 item.SetProviderId(MetadataProvider.Imdb, imdbId.ToString());
-            }
-
-            if (item is Movie)
-            {
-                if (ProviderIdParsers.TryFindTmdbMovieId(xml, out var tmdbId))
-                {
-                    item.SetProviderId(MetadataProvider.Tmdb, tmdbId.ToString());
-                }
             }
 
             if (item is Series)

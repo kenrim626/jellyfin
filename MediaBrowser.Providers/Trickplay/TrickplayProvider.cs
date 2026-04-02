@@ -2,7 +2,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Entities;
-using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.Providers;
@@ -17,8 +16,6 @@ namespace MediaBrowser.Providers.Trickplay;
 /// </summary>
 public class TrickplayProvider : ICustomMetadataProvider<Episode>,
     ICustomMetadataProvider<MusicVideo>,
-    ICustomMetadataProvider<Movie>,
-    ICustomMetadataProvider<Trailer>,
     ICustomMetadataProvider<Video>,
     IHasItemChangeMonitor,
     IHasOrder,
@@ -73,18 +70,6 @@ public class TrickplayProvider : ICustomMetadataProvider<Episode>,
 
     /// <inheritdoc />
     public Task<ItemUpdateType> FetchAsync(MusicVideo item, MetadataRefreshOptions options, CancellationToken cancellationToken)
-    {
-        return FetchInternal(item, options, cancellationToken);
-    }
-
-    /// <inheritdoc />
-    public Task<ItemUpdateType> FetchAsync(Movie item, MetadataRefreshOptions options, CancellationToken cancellationToken)
-    {
-        return FetchInternal(item, options, cancellationToken);
-    }
-
-    /// <inheritdoc />
-    public Task<ItemUpdateType> FetchAsync(Trailer item, MetadataRefreshOptions options, CancellationToken cancellationToken)
     {
         return FetchInternal(item, options, cancellationToken);
     }

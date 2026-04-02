@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediaBrowser.Controller.Entities;
-using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.MediaEncoding;
@@ -23,11 +22,10 @@ namespace Jellyfin.Providers.Tests.MediaInfo
     {
         [Theory]
         [InlineData(typeof(AudioBook))]
-        [InlineData(typeof(BoxSet))]
         [InlineData(typeof(Series))]
         [InlineData(typeof(Season))]
         [InlineData(typeof(Episode), ImageType.Primary)]
-        [InlineData(typeof(Movie), ImageType.Logo, ImageType.Backdrop, ImageType.Primary)]
+        [InlineData(typeof(MusicVideo), ImageType.Logo, ImageType.Backdrop, ImageType.Primary)]
         public void GetSupportedImages_AnyBaseItem_ReturnsExpected(Type type, params ImageType[] expected)
         {
             BaseItem item = (BaseItem)Activator.CreateInstance(type)!;
@@ -39,7 +37,7 @@ namespace Jellyfin.Providers.Tests.MediaInfo
         [Fact]
         public async Task GetImage_NoStreams_ReturnsNoImage()
         {
-            var input = new Movie();
+            var input = new MusicVideo();
 
             var mediaSourceManager = GetMediaSourceManager(input, new List<MediaAttachment>(), new List<MediaStream>());
             var embeddedImageProvider = new EmbeddedImageProvider(mediaSourceManager, null, new NullLogger<EmbeddedImageProvider>());
@@ -70,7 +68,7 @@ namespace Jellyfin.Providers.Tests.MediaInfo
                 });
             }
 
-            var input = new Movie();
+            var input = new MusicVideo();
 
             var mediaEncoder = new Mock<IMediaEncoder>(MockBehavior.Strict);
             mediaEncoder.Setup(encoder => encoder.ExtractVideoImage(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<MediaSourceInfo>(), It.IsAny<MediaStream>(), It.IsAny<int>(), It.IsAny<ImageFormat>(), It.IsAny<CancellationToken>()))
@@ -118,7 +116,7 @@ namespace Jellyfin.Providers.Tests.MediaInfo
                 });
             }
 
-            var input = new Movie();
+            var input = new MusicVideo();
 
             var pathPrefix = "path";
             var mediaEncoder = new Mock<IMediaEncoder>(MockBehavior.Strict);

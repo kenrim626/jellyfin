@@ -8,7 +8,6 @@ using Emby.Naming.Common;
 using MediaBrowser.Controller;
 using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Entities;
-using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.MediaEncoding;
 using MediaBrowser.Controller.Providers;
@@ -79,7 +78,7 @@ public class MediaInfoResolverTests
             .Returns(MediaProtocol.Http);
         BaseItem.MediaSourceManager = mediaSourceManager.Object;
 
-        var video = new Movie
+        var video = new Video
         {
             Path = "https://url.com/My.Video.mkv"
         };
@@ -107,7 +106,7 @@ public class MediaInfoResolverTests
             metadataPath = MetadataDirectoryPath;
         }
 
-        var video = new Mock<Movie>();
+        var video = new Mock<Video>();
         video.Setup(m => m.Path)
             .Returns(VideoDirectoryPath + "/My.Video.mkv");
         video.Setup(m => m.ContainingFolderPath)
@@ -139,7 +138,7 @@ public class MediaInfoResolverTests
     {
         BaseItem.MediaSourceManager = Mock.Of<IMediaSourceManager>();
 
-        var video = new Movie
+        var video = new Video
         {
             Path = VideoDirectoryPath + "/" + movie
         };
@@ -164,7 +163,7 @@ public class MediaInfoResolverTests
     {
         BaseItem.MediaSourceManager = Mock.Of<IMediaSourceManager>();
 
-        var video = new Movie
+        var video = new Video
         {
             Path = VideoDirectoryPath + "/My.Video.mkv"
         };
@@ -186,7 +185,7 @@ public class MediaInfoResolverTests
             .Returns(MediaProtocol.Http);
         BaseItem.MediaSourceManager = mediaSourceManager.Object;
 
-        var video = new Movie
+        var video = new Video
         {
             Path = path
         };
@@ -275,7 +274,7 @@ public class MediaInfoResolverTests
     {
         BaseItem.MediaSourceManager = Mock.Of<IMediaSourceManager>();
 
-        var video = new Movie
+        var video = new Video
         {
             Path = VideoDirectoryPath + "/My.Video.mkv"
         };
@@ -325,7 +324,7 @@ public class MediaInfoResolverTests
     {
         BaseItem.MediaSourceManager = Mock.Of<IMediaSourceManager>();
 
-        var video = new Movie
+        var video = new Video
         {
             Path = VideoDirectoryPath + "/My.Video.mkv"
         };

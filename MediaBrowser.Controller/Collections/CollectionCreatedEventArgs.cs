@@ -3,7 +3,7 @@
 #pragma warning disable CS1591
 
 using System;
-using MediaBrowser.Controller.Entities.Movies;
+using MediaBrowser.Controller.Entities;
 
 namespace MediaBrowser.Controller.Collections
 {
@@ -13,7 +13,7 @@ namespace MediaBrowser.Controller.Collections
         /// Gets or sets the collection.
         /// </summary>
         /// <value>The collection.</value>
-        public BoxSet Collection { get; set; }
+        public Folder Collection { get; set; }
 
         /// <summary>
         /// Gets or sets the options.

@@ -8,11 +8,6 @@ namespace MediaBrowser.Model.Entities;
 public enum CollectionTypeOptions
 {
     /// <summary>
-    /// Movies.
-    /// </summary>
-    movies = 0,
-
-    /// <summary>
     /// TV Shows.
     /// </summary>
     tvshows = 1,
@@ -26,16 +21,6 @@ public enum CollectionTypeOptions
     /// Music Videos.
     /// </summary>
     musicvideos = 3,
-
-    /// <summary>
-    /// Home Videos (and Photos).
-    /// </summary>
-    homevideos = 4,
-
-    /// <summary>
-    /// Box Sets.
-    /// </summary>
-    boxsets = 5,
 
     /// <summary>
     /// Books.

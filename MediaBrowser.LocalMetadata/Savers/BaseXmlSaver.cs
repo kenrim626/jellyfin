@@ -9,7 +9,6 @@ using System.Xml;
 using Jellyfin.Data.Enums;
 using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Entities;
-using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.Playlists;
@@ -387,11 +386,6 @@ namespace MediaBrowser.LocalMetadata.Savers
                 }
 
                 await writer.WriteEndElementAsync().ConfigureAwait(false);
-            }
-
-            if (item is BoxSet boxset)
-            {
-                await AddLinkedChildren(boxset, writer, "CollectionItems", "CollectionItem").ConfigureAwait(false);
             }
 
             if (item is Playlist playlist && !Playlist.IsPlaylistFile(playlist.Path))

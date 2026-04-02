@@ -9,7 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediaBrowser.Common.Extensions;
 using MediaBrowser.Controller.Entities;
-using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Controller.Subtitles;
@@ -93,10 +92,6 @@ namespace MediaBrowser.Providers.MediaInfo
             if (video is Episode)
             {
                 mediaType = VideoContentType.Episode;
-            }
-            else if (video is Movie)
-            {
-                mediaType = VideoContentType.Movie;
             }
             else
             {

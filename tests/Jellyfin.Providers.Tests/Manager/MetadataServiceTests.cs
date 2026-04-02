@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Entities.Audio;
-using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.Entities;
@@ -28,9 +27,9 @@ namespace Jellyfin.Providers.Tests.Manager
             var oldString = "old";
             var oldDate = DateTime.UnixEpoch;
 
-            var source = new MetadataResult<Movie>
+            var source = new MetadataResult<Episode>
             {
-                Item = new Movie
+                Item = new Episode
                 {
                     LockedFields = newLocked,
                     IsLocked = true,
@@ -45,9 +44,9 @@ namespace Jellyfin.Providers.Tests.Manager
                 source.Item.DateCreated = default;
             }
 
-            var target = new MetadataResult<Movie>
+            var target = new MetadataResult<Episode>
             {
-                Item = new Movie
+                Item = new Episode
                 {
                     LockedFields = oldLocked,
                     IsLocked = false,
@@ -57,7 +56,7 @@ namespace Jellyfin.Providers.Tests.Manager
                 }
             };
 
-            MetadataService<Movie, MovieInfo>.MergeBaseItemData(source, target, Array.Empty<MetadataField>(), true, mergeMetadataSettings);
+            MetadataService<Episode, EpisodeInfo>.MergeBaseItemData(source, target, Array.Empty<MetadataField>(), true, mergeMetadataSettings);
 
             if (mergeMetadataSettings)
             {
@@ -152,21 +151,21 @@ namespace Jellyfin.Providers.Tests.Manager
         public void MergeBaseItemData_SimpleField_ReplacesAppropriately(string propName, object oldValue, object newValue)
         {
             // Use type Movie to allow testing of Video3DFormat
-            Assert.False(TestMergeBaseItemData<Movie, MovieInfo>(propName, oldValue, newValue, null, false, out _));
+            Assert.False(TestMergeBaseItemData<Episode, EpisodeInfo>(propName, oldValue, newValue, null, false, out _));
 
-            Assert.True(TestMergeBaseItemData<Movie, MovieInfo>(propName, oldValue, newValue, null, true, out _));
-            Assert.True(TestMergeBaseItemData<Movie, MovieInfo>(propName, null, newValue, null, false, out _));
+            Assert.True(TestMergeBaseItemData<Episode, EpisodeInfo>(propName, oldValue, newValue, null, true, out _));
+            Assert.True(TestMergeBaseItemData<Episode, EpisodeInfo>(propName, null, newValue, null, false, out _));
 
             // Video3DFormat - null values do NOT replace existing data
             if (string.Equals(propName, "Video3DFormat", StringComparison.Ordinal))
             {
                 Assert.False(
-                    TestMergeBaseItemData<Movie, MovieInfo>(propName, oldValue, null, null, true, out _));
+                    TestMergeBaseItemData<Episode, EpisodeInfo>(propName, oldValue, null, null, true, out _));
             }
             else
             {
                 Assert.True(
-                    TestMergeBaseItemData<Movie, MovieInfo>(propName, oldValue, null, null, true, out _));
+                    TestMergeBaseItemData<Episode, EpisodeInfo>(propName, oldValue, null, null, true, out _));
             }
         }
 
@@ -191,12 +190,12 @@ namespace Jellyfin.Providers.Tests.Manager
                 }
             };
 
-            Assert.False(TestMergeBaseItemData<Movie, MovieInfo>(propName, oldValue, newValue, null, false, out _));
+            Assert.False(TestMergeBaseItemData<Episode, EpisodeInfo>(propName, oldValue, newValue, null, false, out _));
 
-            Assert.True(TestMergeBaseItemData<Movie, MovieInfo>(propName, oldValue, newValue, null, true, out _));
-            Assert.True(TestMergeBaseItemData<Movie, MovieInfo>(propName, Array.Empty<MediaUrl>(), newValue, null, false, out _));
+            Assert.True(TestMergeBaseItemData<Episode, EpisodeInfo>(propName, oldValue, newValue, null, true, out _));
+            Assert.True(TestMergeBaseItemData<Episode, EpisodeInfo>(propName, Array.Empty<MediaUrl>(), newValue, null, false, out _));
 
-            Assert.True(TestMergeBaseItemData<Movie, MovieInfo>(propName, oldValue, Array.Empty<MediaUrl>(), null, true, out _));
+            Assert.True(TestMergeBaseItemData<Episode, EpisodeInfo>(propName, oldValue, Array.Empty<MediaUrl>(), null, true, out _));
         }
 
         [Fact]
@@ -213,8 +212,8 @@ namespace Jellyfin.Providers.Tests.Manager
             {
                 { "provider 1", "id 2" }
             };
-            Assert.False(TestMergeBaseItemData<Movie, MovieInfo>(propName, new Dictionary<string, string>(oldValue), overwriteNewValue, null, false, out _));
-            TestMergeBaseItemData<Movie, MovieInfo>(propName, new Dictionary<string, string>(oldValue), overwriteNewValue, null, true, out var overwritten);
+            Assert.False(TestMergeBaseItemData<Episode, EpisodeInfo>(propName, new Dictionary<string, string>(oldValue), overwriteNewValue, null, false, out _));
+            TestMergeBaseItemData<Episode, EpisodeInfo>(propName, new Dictionary<string, string>(oldValue), overwriteNewValue, null, true, out var overwritten);
             Assert.Equal(overwriteNewValue, overwritten);
 
             // merge without overwriting
@@ -223,13 +222,13 @@ namespace Jellyfin.Providers.Tests.Manager
                 { "provider 1", "id 2" },
                 { "provider 2", "id 3" }
             };
-            TestMergeBaseItemData<Movie, MovieInfo>(propName, new Dictionary<string, string>(oldValue), mergeNewValue, null, false, out var merged);
+            TestMergeBaseItemData<Episode, EpisodeInfo>(propName, new Dictionary<string, string>(oldValue), mergeNewValue, null, false, out var merged);
             var actual = (Dictionary<string, string>)merged!;
             Assert.Equal("id 1", actual["provider 1"]);
             Assert.Equal("id 3", actual["provider 2"]);
 
             // empty source results in no change
-            TestMergeBaseItemData<Movie, MovieInfo>(propName, new Dictionary<string, string>(oldValue), new Dictionary<string, string>(), null, true, out var notOverwritten);
+            TestMergeBaseItemData<Episode, EpisodeInfo>(propName, new Dictionary<string, string>(oldValue), new Dictionary<string, string>(), null, true, out var notOverwritten);
             Assert.Equal(oldValue, notOverwritten);
         }
 
@@ -325,20 +324,20 @@ namespace Jellyfin.Providers.Tests.Manager
 
         private static bool TestMergeBaseItemDataPerson(List<PersonInfo>? oldValue, List<PersonInfo>? newValue, MetadataField? lockField, bool replaceData, out object? actualValue)
         {
-            var source = new MetadataResult<Movie>
+            var source = new MetadataResult<Episode>
             {
-                Item = new Movie(),
+                Item = new Episode(),
                 People = newValue
             };
 
-            var target = new MetadataResult<Movie>
+            var target = new MetadataResult<Episode>
             {
-                Item = new Movie(),
+                Item = new Episode(),
                 People = oldValue
             };
 
             var lockedFields = lockField is null ? Array.Empty<MetadataField>() : new[] { (MetadataField)lockField };
-            MetadataService<Movie, MovieInfo>.MergeBaseItemData(source, target, lockedFields, replaceData, false);
+            MetadataService<Episode, EpisodeInfo>.MergeBaseItemData(source, target, lockedFields, replaceData, false);
 
             actualValue = target.People;
             return newValue?.SequenceEqual((IEnumerable<PersonInfo>)actualValue!) ?? actualValue is null;

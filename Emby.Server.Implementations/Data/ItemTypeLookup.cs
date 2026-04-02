@@ -5,7 +5,6 @@ using Emby.Server.Implementations.Playlists;
 using Jellyfin.Data.Enums;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Entities.Audio;
-using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Persistence;
 using MediaBrowser.Controller.Playlists;
@@ -31,13 +30,11 @@ public class ItemTypeLookup : IItemTypeLookup
         { BaseItemKind.AudioBook, typeof(AudioBook).FullName! },
         { BaseItemKind.BasePluginFolder, typeof(BasePluginFolder).FullName! },
         { BaseItemKind.Book, typeof(Book).FullName! },
-        { BaseItemKind.BoxSet, typeof(BoxSet).FullName! },
         { BaseItemKind.Channel, typeof(Channel).FullName! },
         { BaseItemKind.CollectionFolder, typeof(CollectionFolder).FullName! },
         { BaseItemKind.Episode, typeof(Episode).FullName! },
         { BaseItemKind.Folder, typeof(Folder).FullName! },
         { BaseItemKind.Genre, typeof(Genre).FullName! },
-        { BaseItemKind.Movie, typeof(Movie).FullName! },
         { BaseItemKind.MusicAlbum, typeof(MusicAlbum).FullName! },
         { BaseItemKind.MusicArtist, typeof(MusicArtist).FullName! },
         { BaseItemKind.MusicGenre, typeof(MusicGenre).FullName! },
@@ -50,7 +47,6 @@ public class ItemTypeLookup : IItemTypeLookup
         { BaseItemKind.Season, typeof(Season).FullName! },
         { BaseItemKind.Series, typeof(Series).FullName! },
         { BaseItemKind.Studio, typeof(Studio).FullName! },
-        { BaseItemKind.Trailer, typeof(Trailer).FullName! },
         { BaseItemKind.UserRootFolder, typeof(UserRootFolder).FullName! },
         { BaseItemKind.UserView, typeof(UserView).FullName! },
         { BaseItemKind.Video, typeof(Video).FullName! },

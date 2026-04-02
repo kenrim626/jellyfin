@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediaBrowser.Controller.Collections;
 using MediaBrowser.Controller.Entities;
-using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.Playlists;
 using MediaBrowser.Controller.Providers;
@@ -72,7 +71,7 @@ public class CleanupCollectionAndPlaylistPathsTask : IScheduledTask
         }
         else
         {
-            var collections = collectionsFolder.Children.OfType<BoxSet>().ToArray();
+            var collections = collectionsFolder.Children.OfType<Folder>().ToArray();
             _logger.LogDebug("Found {CollectionLength} boxsets", collections.Length);
 
             for (var index = 0; index < collections.Length; index++)

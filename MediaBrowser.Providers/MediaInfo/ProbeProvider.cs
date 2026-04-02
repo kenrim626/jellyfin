@@ -11,7 +11,6 @@ using MediaBrowser.Controller.Chapters;
 using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Entities.Audio;
-using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.Lyrics;
@@ -32,8 +31,6 @@ namespace MediaBrowser.Providers.MediaInfo
     /// </summary>
     public class ProbeProvider : ICustomMetadataProvider<Episode>,
         ICustomMetadataProvider<MusicVideo>,
-        ICustomMetadataProvider<Movie>,
-        ICustomMetadataProvider<Trailer>,
         ICustomMetadataProvider<Video>,
         ICustomMetadataProvider<Audio>,
         ICustomMetadataProvider<AudioBook>,
@@ -179,18 +176,6 @@ namespace MediaBrowser.Providers.MediaInfo
 
         /// <inheritdoc />
         public Task<ItemUpdateType> FetchAsync(MusicVideo item, MetadataRefreshOptions options, CancellationToken cancellationToken)
-        {
-            return FetchVideoInfo(item, options, cancellationToken);
-        }
-
-        /// <inheritdoc />
-        public Task<ItemUpdateType> FetchAsync(Movie item, MetadataRefreshOptions options, CancellationToken cancellationToken)
-        {
-            return FetchVideoInfo(item, options, cancellationToken);
-        }
-
-        /// <inheritdoc />
-        public Task<ItemUpdateType> FetchAsync(Trailer item, MetadataRefreshOptions options, CancellationToken cancellationToken)
         {
             return FetchVideoInfo(item, options, cancellationToken);
         }

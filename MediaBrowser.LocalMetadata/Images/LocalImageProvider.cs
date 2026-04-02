@@ -6,7 +6,6 @@ using System.Linq;
 using Jellyfin.Extensions;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Entities.Audio;
-using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.Entities;
@@ -218,7 +217,7 @@ namespace MediaBrowser.LocalMetadata.Images
                     AddImage(files, images, "disc", imagePrefix, isInMixedFolder, ImageType.Disc);
                 }
             }
-            else if (item is Video || item is BoxSet)
+            else if (item is Video)
             {
                 added = AddImage(files, images, "disc", imagePrefix, isInMixedFolder, ImageType.Disc);
 

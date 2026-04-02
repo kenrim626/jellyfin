@@ -5,7 +5,6 @@ using System.Xml;
 using Jellyfin.Extensions;
 using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Entities;
-using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.Providers;
@@ -53,7 +52,7 @@ namespace MediaBrowser.XbmcMetadata.Savers
             }
 
             // only allow movie object to read movie.nfo, not owned videos (which will be itemtype video, not movie)
-            if (!item.IsInMixedFolder && item.ItemType == typeof(Movie))
+            if (!item.IsInMixedFolder && item.ItemType == typeof(Video))
             {
                 yield return Path.Combine(path, "movie.nfo");
             }
@@ -107,16 +106,6 @@ namespace MediaBrowser.XbmcMetadata.Savers
                 if (!string.IsNullOrEmpty(musicVideo.Album))
                 {
                     writer.WriteElementString("album", musicVideo.Album);
-                }
-            }
-
-            if (item is Movie movie)
-            {
-                if (!string.IsNullOrEmpty(movie.CollectionName))
-                {
-                    writer.WriteStartElement("set");
-                    writer.WriteElementString("name", movie.CollectionName);
-                    writer.WriteEndElement();
                 }
             }
         }

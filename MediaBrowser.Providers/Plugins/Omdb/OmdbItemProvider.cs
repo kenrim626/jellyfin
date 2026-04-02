@@ -17,7 +17,6 @@ using Jellyfin.Extensions.Json;
 using MediaBrowser.Common.Net;
 using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Entities;
-using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.Providers;
@@ -28,7 +27,7 @@ using MediaBrowser.Model.Providers;
 namespace MediaBrowser.Providers.Plugins.Omdb
 {
     public class OmdbItemProvider : IRemoteMetadataProvider<Series, SeriesInfo>,
-        IRemoteMetadataProvider<Movie, MovieInfo>, IRemoteMetadataProvider<Trailer, TrailerInfo>, IHasOrder
+        IHasOrder
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILibraryManager _libraryManager;
@@ -55,17 +54,7 @@ namespace MediaBrowser.Providers.Plugins.Omdb
         // After primary option
         public int Order => 2;
 
-        public Task<IEnumerable<RemoteSearchResult>> GetSearchResults(TrailerInfo searchInfo, CancellationToken cancellationToken)
-        {
-            return GetSearchResultsInternal(searchInfo, true, cancellationToken);
-        }
-
         public Task<IEnumerable<RemoteSearchResult>> GetSearchResults(SeriesInfo searchInfo, CancellationToken cancellationToken)
-        {
-            return GetSearchResultsInternal(searchInfo, true, cancellationToken);
-        }
-
-        public Task<IEnumerable<RemoteSearchResult>> GetSearchResults(MovieInfo searchInfo, CancellationToken cancellationToken)
         {
             return GetSearchResultsInternal(searchInfo, true, cancellationToken);
         }
@@ -165,19 +154,9 @@ namespace MediaBrowser.Providers.Plugins.Omdb
             return Enumerable.Empty<RemoteSearchResult>();
         }
 
-        public Task<MetadataResult<Trailer>> GetMetadata(TrailerInfo info, CancellationToken cancellationToken)
-        {
-            return GetResult<Trailer>(info, cancellationToken);
-        }
-
         public Task<MetadataResult<Series>> GetMetadata(SeriesInfo info, CancellationToken cancellationToken)
         {
             return GetResult<Series>(info, cancellationToken);
-        }
-
-        public Task<MetadataResult<Movie>> GetMetadata(MovieInfo info, CancellationToken cancellationToken)
-        {
-            return GetResult<Movie>(info, cancellationToken);
         }
 
         private RemoteSearchResult ResultToMetadataResult(SearchResult result, ItemLookupInfo searchInfo, int? indexNumberEnd)

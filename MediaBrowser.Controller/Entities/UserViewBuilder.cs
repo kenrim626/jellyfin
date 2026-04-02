@@ -66,9 +66,6 @@ namespace MediaBrowser.Controller.Entities
                 case CollectionType.tvshows:
                     return GetTvView(queryParent, user, query);
 
-                case CollectionType.movies:
-                    return GetMovieFolders(queryParent, user, query);
-
                 case CollectionType.tvshowseries:
                     return GetTvSeries(queryParent, user, query);
 
@@ -86,27 +83,6 @@ namespace MediaBrowser.Controller.Entities
 
                 case CollectionType.tvlatest:
                     return GetTvLatest(queryParent, user, query);
-
-                case CollectionType.moviefavorites:
-                    return GetFavoriteMovies(queryParent, user, query);
-
-                case CollectionType.movielatest:
-                    return GetMovieLatest(queryParent, user, query);
-
-                case CollectionType.moviegenres:
-                    return GetMovieGenres(queryParent, user, query);
-
-                case CollectionType.moviegenre:
-                    return GetMovieGenreItems(queryParent, displayParent, user, query);
-
-                case CollectionType.movieresume:
-                    return GetMovieResume(queryParent, user, query);
-
-                case CollectionType.moviemovies:
-                    return GetMovieMovies(queryParent, user, query);
-
-                case CollectionType.moviecollection:
-                    return GetMovieCollections(user, query);
 
                 case CollectionType.tvfavoriteepisodes:
                     return GetFavoriteEpisodes(queryParent, user, query);
@@ -131,45 +107,6 @@ namespace MediaBrowser.Controller.Entities
             return 50;
         }
 
-        private QueryResult<BaseItem> GetMovieFolders(Folder parent, User user, InternalItemsQuery query)
-        {
-            if (query.Recursive)
-            {
-                query.Recursive = true;
-                query.SetUser(user);
-
-                if (query.IncludeItemTypes.Length == 0)
-                {
-                    query.IncludeItemTypes = new[] { BaseItemKind.Movie };
-                }
-
-                return parent.QueryRecursive(query);
-            }
-
-            var list = new List<BaseItem>
-            {
-                GetUserView(CollectionType.movieresume, "HeaderContinueWatching", "0", parent),
-                GetUserView(CollectionType.movielatest, "Latest", "1", parent),
-                GetUserView(CollectionType.moviemovies, "Movies", "2", parent),
-                GetUserView(CollectionType.moviecollection, "Collections", "3", parent),
-                GetUserView(CollectionType.moviefavorites, "Favorites", "4", parent),
-                GetUserView(CollectionType.moviegenres, "Genres", "5", parent)
-            };
-
-            return GetResult(list, query);
-        }
-
-        private QueryResult<BaseItem> GetFavoriteMovies(Folder parent, User user, InternalItemsQuery query)
-        {
-            query.Recursive = true;
-            query.Parent = parent;
-            query.SetUser(user);
-            query.IsFavorite = true;
-            query.IncludeItemTypes = new[] { BaseItemKind.Movie };
-
-            return _libraryManager.GetItemsResult(query);
-        }
-
         private QueryResult<BaseItem> GetFavoriteSeries(Folder parent, User user, InternalItemsQuery query)
         {
             query.Recursive = true;
@@ -192,95 +129,9 @@ namespace MediaBrowser.Controller.Entities
             return _libraryManager.GetItemsResult(query);
         }
 
-        private QueryResult<BaseItem> GetMovieMovies(Folder parent, User user, InternalItemsQuery query)
-        {
-            query.Recursive = true;
-            query.Parent = parent;
-            query.SetUser(user);
-
-            query.IncludeItemTypes = new[] { BaseItemKind.Movie };
-
-            return _libraryManager.GetItemsResult(query);
-        }
-
-        private QueryResult<BaseItem> GetMovieCollections(User user, InternalItemsQuery query)
-        {
-            query.Parent = null;
-            query.IncludeItemTypes = new[] { BaseItemKind.BoxSet };
-            query.SetUser(user);
-            query.Recursive = true;
-
-            return _libraryManager.GetItemsResult(query);
-        }
-
-        private QueryResult<BaseItem> GetMovieLatest(Folder parent, User user, InternalItemsQuery query)
-        {
-            query.OrderBy = new[] { (ItemSortBy.DateCreated, SortOrder.Descending), (ItemSortBy.SortName, SortOrder.Descending) };
-            query.Recursive = true;
-            query.Parent = parent;
-            query.SetUser(user);
-            query.Limit = GetSpecialItemsLimit();
-            query.IncludeItemTypes = new[] { BaseItemKind.Movie };
-
-            return ConvertToResult(_libraryManager.GetItemList(query));
-        }
-
-        private QueryResult<BaseItem> GetMovieResume(Folder parent, User user, InternalItemsQuery query)
-        {
-            query.OrderBy = new[] { (ItemSortBy.DatePlayed, SortOrder.Descending), (ItemSortBy.SortName, SortOrder.Descending) };
-            query.IsResumable = true;
-            query.Recursive = true;
-            query.Parent = parent;
-            query.SetUser(user);
-            query.Limit = GetSpecialItemsLimit();
-            query.IncludeItemTypes = new[] { BaseItemKind.Movie };
-
-            return ConvertToResult(_libraryManager.GetItemList(query));
-        }
-
         private QueryResult<BaseItem> ConvertToResult(IReadOnlyList<BaseItem> items)
         {
             return new QueryResult<BaseItem>(items);
-        }
-
-        private QueryResult<BaseItem> GetMovieGenres(Folder parent, User user, InternalItemsQuery query)
-        {
-            var genres = parent.QueryRecursive(new InternalItemsQuery(user)
-            {
-                IncludeItemTypes = new[] { BaseItemKind.Movie },
-                Recursive = true,
-                EnableTotalRecordCount = false
-            }).Items
-                .SelectMany(i => i.Genres)
-                .DistinctNames()
-                .Select(i =>
-                {
-                    try
-                    {
-                        return _libraryManager.GetGenre(i);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "Error getting genre");
-                        return null;
-                    }
-                })
-                .Where(i => i is not null)
-                .Select(i => GetUserViewWithName(CollectionType.moviegenre, i.SortName, parent));
-
-            return GetResult(genres, query);
-        }
-
-        private QueryResult<BaseItem> GetMovieGenreItems(Folder queryParent, Folder displayParent, User user, InternalItemsQuery query)
-        {
-            query.Recursive = true;
-            query.Parent = queryParent;
-            query.GenreIds = new[] { displayParent.Id };
-            query.SetUser(user);
-
-            query.IncludeItemTypes = new[] { BaseItemKind.Movie };
-
-            return _libraryManager.GetItemsResult(query);
         }
 
         private QueryResult<BaseItem> GetTvView(Folder parent, User user, InternalItemsQuery query)
@@ -669,27 +520,6 @@ namespace MediaBrowser.Controller.Entities
                 }
 
                 if (isPlaceHolder != filterValue)
-                {
-                    return false;
-                }
-            }
-
-            if (query.HasSpecialFeature.HasValue)
-            {
-                var filterValue = query.HasSpecialFeature.Value;
-
-                if (item is IHasSpecialFeatures movie)
-                {
-                    var ok = filterValue
-                        ? movie.SpecialFeatureIds.Count > 0
-                        : movie.SpecialFeatureIds.Count == 0;
-
-                    if (!ok)
-                    {
-                        return false;
-                    }
-                }
-                else
                 {
                     return false;
                 }

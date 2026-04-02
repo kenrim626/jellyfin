@@ -5,7 +5,6 @@ using Emby.Naming.Common;
 using MediaBrowser.Controller;
 using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Entities;
-using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.MediaEncoding;
 using MediaBrowser.Model.Entities;
@@ -64,7 +63,7 @@ public class SubtitleResolverTests
     {
         BaseItem.MediaSourceManager = Mock.Of<IMediaSourceManager>();
 
-        var video = new Movie
+        var video = new Video
         {
             Path = MediaInfoResolverTests.VideoDirectoryPath + "/My.Video.mkv"
         };

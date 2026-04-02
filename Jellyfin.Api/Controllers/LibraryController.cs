@@ -21,7 +21,6 @@ using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Dto;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Entities.Audio;
-using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.IO;
 using MediaBrowser.Controller.Library;
@@ -761,27 +760,16 @@ public class LibraryController : BaseJellyfinApiController
 
         var dtoOptions = new DtoOptions { Fields = fields };
 
-        bool? isMovie = item is Movie || item is Trailer;
         bool? isSeries = item is Series;
 
         var includeItemTypes = new List<BaseItemKind>();
-        if (isMovie.Value)
-        {
-            includeItemTypes.Add(BaseItemKind.Movie);
-            if (_serverConfigurationManager.Configuration.EnableExternalContentInSuggestions)
-            {
-                includeItemTypes.Add(BaseItemKind.Trailer);
-            }
-        }
-        else if (isSeries.Value)
+        if (isSeries.Value)
         {
             includeItemTypes.Add(BaseItemKind.Series);
         }
         else
         {
-            // For non series and movie types these columns are typically null
-            // isSeries = null;
-            isMovie = null;
+            // For non series types these columns are typically null
             includeItemTypes.Add(item.GetBaseItemKind());
         }
 
@@ -792,8 +780,8 @@ public class LibraryController : BaseJellyfinApiController
             Limit = limit,
             IncludeItemTypes = includeItemTypes.ToArray(),
             DtoOptions = dtoOptions,
-            EnableTotalRecordCount = !isMovie ?? true,
-            EnableGroupByMetadataKey = isMovie ?? false,
+            EnableTotalRecordCount = true,
+            EnableGroupByMetadataKey = false,
             ExcludeItemIds = [itemId],
             OrderBy = [(ItemSortBy.Random, SortOrder.Ascending)]
         };
@@ -984,16 +972,13 @@ public class LibraryController : BaseJellyfinApiController
     {
         return contentType switch
         {
-            CollectionType.boxsets => new[] { "BoxSet" },
             CollectionType.playlists => new[] { "Playlist" },
-            CollectionType.movies => new[] { "Movie" },
             CollectionType.tvshows => new[] { "Series", "Season", "Episode" },
             CollectionType.books => new[] { "Book" },
             CollectionType.music => new[] { "MusicArtist", "MusicAlbum", "Audio", "MusicVideo" },
-            CollectionType.homevideos => new[] { "Video", "Photo" },
             CollectionType.photos => new[] { "Video", "Photo" },
             CollectionType.musicvideos => new[] { "MusicVideo" },
-            _ => new[] { "Series", "Season", "Episode", "Movie" }
+            _ => new[] { "Series", "Season", "Episode" }
         };
     }
 

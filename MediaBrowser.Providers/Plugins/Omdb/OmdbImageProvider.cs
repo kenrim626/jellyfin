@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using MediaBrowser.Common.Net;
 using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Entities;
-using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.Entities;
@@ -74,7 +73,7 @@ namespace MediaBrowser.Providers.Plugins.Omdb
 
         public bool Supports(BaseItem item)
         {
-            return item is Movie || item is Trailer || item is Episode;
+            return item is Episode;
         }
     }
 }

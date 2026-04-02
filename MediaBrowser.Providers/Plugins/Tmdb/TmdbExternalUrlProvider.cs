@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using MediaBrowser.Controller.Entities;
-using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.Entities;
@@ -72,24 +71,10 @@ public class TmdbExternalUrlProvider : IExternalUrlProvider
                 }
 
                 break;
-            case Movie:
-                if (item.TryGetProviderId(MetadataProvider.Tmdb, out externalId))
-                {
-                    yield return TmdbUtils.BaseTmdbUrl + $"movie/{externalId}";
-                }
-
-                break;
             case Person:
                 if (item.TryGetProviderId(MetadataProvider.Tmdb, out externalId))
                 {
                     yield return TmdbUtils.BaseTmdbUrl + $"person/{externalId}";
-                }
-
-                break;
-            case BoxSet:
-                if (item.TryGetProviderId(MetadataProvider.Tmdb, out externalId))
-                {
-                    yield return TmdbUtils.BaseTmdbUrl + $"collection/{externalId}";
                 }
 
                 break;

@@ -9,7 +9,6 @@ using Jellyfin.Api.Helpers;
 using MediaBrowser.Common.Api;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Entities.Audio;
-using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.Providers;
@@ -76,40 +75,6 @@ public class ItemLookupController : BaseJellyfinApiController
     }
 
     /// <summary>
-    /// Get movie remote search.
-    /// </summary>
-    /// <param name="query">Remote search query.</param>
-    /// <response code="200">Movie remote search executed.</response>
-    /// <returns>
-    /// A <see cref="Task" /> that represents the asynchronous operation to get the remote search results.
-    /// The task result contains an <see cref="OkResult"/> containing the list of remote search results.
-    /// </returns>
-    [HttpPost("Items/RemoteSearch/Movie")]
-    public async Task<ActionResult<IEnumerable<RemoteSearchResult>>> GetMovieRemoteSearchResults([FromBody, Required] RemoteSearchQuery<MovieInfo> query)
-    {
-        var results = await _providerManager.GetRemoteSearchResults<Movie, MovieInfo>(query, CancellationToken.None)
-            .ConfigureAwait(false);
-        return Ok(results);
-    }
-
-    /// <summary>
-    /// Get trailer remote search.
-    /// </summary>
-    /// <param name="query">Remote search query.</param>
-    /// <response code="200">Trailer remote search executed.</response>
-    /// <returns>
-    /// A <see cref="Task" /> that represents the asynchronous operation to get the remote search results.
-    /// The task result contains an <see cref="OkResult"/> containing the list of remote search results.
-    /// </returns>
-    [HttpPost("Items/RemoteSearch/Trailer")]
-    public async Task<ActionResult<IEnumerable<RemoteSearchResult>>> GetTrailerRemoteSearchResults([FromBody, Required] RemoteSearchQuery<TrailerInfo> query)
-    {
-        var results = await _providerManager.GetRemoteSearchResults<Trailer, TrailerInfo>(query, CancellationToken.None)
-            .ConfigureAwait(false);
-        return Ok(results);
-    }
-
-    /// <summary>
     /// Get music video remote search.
     /// </summary>
     /// <param name="query">Remote search query.</param>
@@ -139,23 +104,6 @@ public class ItemLookupController : BaseJellyfinApiController
     public async Task<ActionResult<IEnumerable<RemoteSearchResult>>> GetSeriesRemoteSearchResults([FromBody, Required] RemoteSearchQuery<SeriesInfo> query)
     {
         var results = await _providerManager.GetRemoteSearchResults<Series, SeriesInfo>(query, CancellationToken.None)
-            .ConfigureAwait(false);
-        return Ok(results);
-    }
-
-    /// <summary>
-    /// Get box set remote search.
-    /// </summary>
-    /// <param name="query">Remote search query.</param>
-    /// <response code="200">Box set remote search executed.</response>
-    /// <returns>
-    /// A <see cref="Task" /> that represents the asynchronous operation to get the remote search results.
-    /// The task result contains an <see cref="OkResult"/> containing the list of remote search results.
-    /// </returns>
-    [HttpPost("Items/RemoteSearch/BoxSet")]
-    public async Task<ActionResult<IEnumerable<RemoteSearchResult>>> GetBoxSetRemoteSearchResults([FromBody, Required] RemoteSearchQuery<BoxSetInfo> query)
-    {
-        var results = await _providerManager.GetRemoteSearchResults<BoxSet, BoxSetInfo>(query, CancellationToken.None)
             .ConfigureAwait(false);
         return Ok(results);
     }

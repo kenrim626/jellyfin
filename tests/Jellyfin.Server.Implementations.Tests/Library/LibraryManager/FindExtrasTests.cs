@@ -9,7 +9,6 @@ using Emby.Server.Implementations.Library.Resolvers.Audio;
 using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Entities.Audio;
-using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.Persistence;
@@ -54,7 +53,7 @@ public class FindExtrasTests
     [Fact]
     public void FindExtras_SeparateMovieFolder_FindsCorrectExtras()
     {
-        var owner = new Movie { Name = "Up", Path = "/movies/Up/Up.mkv" };
+        var owner = new Video { Name = "Up", Path = "/movies/Up/Up.mkv" };
         var paths = new List<string>
         {
             "/movies/Up/Up.mkv",
@@ -75,14 +74,14 @@ public class FindExtrasTests
         Assert.Equal(3, extras.Count);
         Assert.Equal(ExtraType.Unknown, extras[0].ExtraType);
         Assert.Equal(ExtraType.Trailer, extras[1].ExtraType);
-        Assert.Equal(typeof(Trailer), extras[1].GetType());
+        Assert.Equal(typeof(Video), extras[1].GetType());
         Assert.Equal(ExtraType.Sample, extras[2].ExtraType);
     }
 
     [Fact]
     public void FindExtras_SeparateMovieFolder_CleanExtraNames()
     {
-        var owner = new Movie { Name = "Up", Path = "/movies/Up/Up.mkv" };
+        var owner = new Video { Name = "Up", Path = "/movies/Up/Up.mkv" };
         var paths = new List<string>
         {
             "/movies/Up/Up.mkv",
@@ -111,7 +110,7 @@ public class FindExtrasTests
     [Fact]
     public void FindExtras_SeparateMovieFolderWithMixedExtras_FindsCorrectExtras()
     {
-        var owner = new Movie { Name = "Up", Path = "/movies/Up/Up.mkv" };
+        var owner = new Video { Name = "Up", Path = "/movies/Up/Up.mkv" };
         var paths = new List<string>
         {
             "/movies/Up/Up.mkv",
@@ -201,9 +200,9 @@ public class FindExtrasTests
         Assert.Equal(ExtraType.Unknown, extras[0].ExtraType);
         Assert.Equal(typeof(Video), extras[0].GetType());
         Assert.Equal(ExtraType.Trailer, extras[1].ExtraType);
-        Assert.Equal(typeof(Trailer), extras[1].GetType());
+        Assert.Equal(typeof(Video), extras[1].GetType());
         Assert.Equal(ExtraType.Trailer, extras[2].ExtraType);
-        Assert.Equal(typeof(Trailer), extras[2].GetType());
+        Assert.Equal(typeof(Video), extras[2].GetType());
         Assert.Equal(ExtraType.BehindTheScenes, extras[3].ExtraType);
         Assert.Equal(ExtraType.Sample, extras[4].ExtraType);
         Assert.Equal(ExtraType.ThemeSong, extras[5].ExtraType);
@@ -215,7 +214,7 @@ public class FindExtrasTests
     [Fact]
     public void FindExtras_SeparateMovieFolderWithMixedExtras_FindsOnlyExtrasInMovieFolder()
     {
-        var owner = new Movie { Name = "Up", Path = "/movies/Up/Up.mkv" };
+        var owner = new Video { Name = "Up", Path = "/movies/Up/Up.mkv" };
         var paths = new List<string>
         {
             "/movies/Up/Up.mkv",
@@ -233,7 +232,7 @@ public class FindExtrasTests
 
         Assert.Single(extras);
         Assert.Equal(ExtraType.Trailer, extras[0].ExtraType);
-        Assert.Equal(typeof(Trailer), extras[0].GetType());
+        Assert.Equal(typeof(Video), extras[0].GetType());
         Assert.Equal("trailer", extras[0].FileNameWithoutExtension);
         Assert.Equal("/movies/Up/trailer.mkv", extras[0].Path);
     }
@@ -241,7 +240,7 @@ public class FindExtrasTests
     [Fact]
     public void FindExtras_SeparateMovieFolderWithParts_FindsCorrectExtras()
     {
-        var owner = new Movie { Name = "Up", Path = "/movies/Up/Up - part1.mkv" };
+        var owner = new Video { Name = "Up", Path = "/movies/Up/Up - part1.mkv" };
         var paths = new List<string>
         {
             "/movies/Up/Up - part1.mkv",
@@ -260,7 +259,7 @@ public class FindExtrasTests
 
         Assert.Single(extras);
         Assert.Equal(ExtraType.Trailer, extras[0].ExtraType);
-        Assert.Equal(typeof(Trailer), extras[0].GetType());
+        Assert.Equal(typeof(Video), extras[0].GetType());
         Assert.Equal("trailer", extras[0].FileNameWithoutExtension);
         Assert.Equal("/movies/Up/trailer.mkv", extras[0].Path);
     }
@@ -268,7 +267,7 @@ public class FindExtrasTests
     [Fact]
     public void FindExtras_WrongExtensions_FindsNoExtras()
     {
-        var owner = new Movie { Name = "Up", Path = "/movies/Up/Up.mkv" };
+        var owner = new Video { Name = "Up", Path = "/movies/Up/Up.mkv" };
         var paths = new List<string>
         {
             "/movies/Up/Up.mkv",
@@ -326,7 +325,7 @@ public class FindExtrasTests
 
         Assert.Equal(2, extras.Count);
         Assert.Equal(ExtraType.Trailer, extras[0].ExtraType);
-        Assert.Equal(typeof(Trailer), extras[0].GetType());
+        Assert.Equal(typeof(Video), extras[0].GetType());
         Assert.Equal("trailer", extras[0].FileNameWithoutExtension);
         Assert.Equal("/series/Dexter/trailer.mkv", extras[0].Path);
         Assert.Equal("/series/Dexter/trailers/trailer2.mkv", extras[1].Path);

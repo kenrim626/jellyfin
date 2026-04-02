@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using Jellyfin.Extensions;
 using MediaBrowser.Common.Extensions;
 using MediaBrowser.Controller.Entities;
-using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.Persistence;
@@ -295,10 +294,6 @@ namespace MediaBrowser.Providers.Subtitles
             {
                 mediaType = VideoContentType.Episode;
             }
-            else if (video is Movie)
-            {
-                mediaType = VideoContentType.Movie;
-            }
             else
             {
                 // These are the only supported types
@@ -391,10 +386,6 @@ namespace MediaBrowser.Providers.Subtitles
             if (item is Episode)
             {
                 mediaType = VideoContentType.Episode;
-            }
-            else if (item is Movie)
-            {
-                mediaType = VideoContentType.Movie;
             }
             else
             {

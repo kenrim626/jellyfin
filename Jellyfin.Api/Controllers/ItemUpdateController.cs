@@ -179,13 +179,11 @@ public class ItemUpdateController : BaseJellyfinApiController
                 info.ContentType = configuredContentType;
 
                 if (inheritedContentType is null
-                    || inheritedContentType == CollectionType.tvshows
-                    || inheritedContentType == CollectionType.movies)
+                    || inheritedContentType == CollectionType.tvshows)
                 {
                     info.ContentTypeOptions = info.ContentTypeOptions
                         .Where(i => string.IsNullOrWhiteSpace(i.Value)
-                                    || string.Equals(i.Value, "TvShows", StringComparison.OrdinalIgnoreCase)
-                                    || string.Equals(i.Value, "Movies", StringComparison.OrdinalIgnoreCase))
+                                    || string.Equals(i.Value, "TvShows", StringComparison.OrdinalIgnoreCase))
                         .ToArray();
                 }
             }

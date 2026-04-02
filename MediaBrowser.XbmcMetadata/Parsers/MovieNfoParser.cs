@@ -4,7 +4,6 @@ using System.Linq;
 using System.Xml;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Controller.Entities;
-using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Extensions;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.Providers;
@@ -68,30 +67,6 @@ namespace MediaBrowser.XbmcMetadata.Parsers
                         break;
                     }
 
-                case "set":
-                    {
-                        var movie = item as Movie;
-
-                        var tmdbcolid = reader.GetAttribute("tmdbcolid");
-                        movie?.TrySetProviderId(MetadataProvider.TmdbCollection, tmdbcolid);
-
-                        var val = reader.ReadInnerXml();
-
-                        if (!string.IsNullOrWhiteSpace(val) && movie is not null)
-                        {
-                            try
-                            {
-                                ParseSetXml(val, movie);
-                            }
-                            catch (Exception ex)
-                            {
-                                Logger.LogError(ex, "Error parsing set node");
-                            }
-                        }
-
-                        break;
-                    }
-
                 case "artist":
                     var artist = reader.ReadNormalizedString();
                     if (!string.IsNullOrEmpty(artist) && item is MusicVideo artistVideo)
@@ -111,49 +86,6 @@ namespace MediaBrowser.XbmcMetadata.Parsers
                 default:
                     base.FetchDataFromXmlNode(reader, itemResult);
                     break;
-            }
-        }
-
-        private void ParseSetXml(string xml, Movie movie)
-        {
-            // These are not going to be valid xml so no sense in causing the provider to fail and spamming the log with exceptions
-            try
-            {
-                using (var stringReader = new StringReader("<set>" + xml + "</set>"))
-                using (var reader = XmlReader.Create(stringReader, GetXmlReaderSettings()))
-                {
-                    reader.MoveToContent();
-                    reader.Read();
-
-                    // Loop through each element
-                    while (!reader.EOF && reader.ReadState == ReadState.Interactive)
-                    {
-                        if (reader.NodeType == XmlNodeType.Text && reader.Depth == 1)
-                        {
-                            movie.CollectionName = reader.Value;
-                            break;
-                        }
-                        else if (reader.NodeType == XmlNodeType.Element)
-                        {
-                            switch (reader.Name)
-                            {
-                                case "name":
-                                    movie.CollectionName = reader.ReadElementContentAsString();
-                                    break;
-                                default:
-                                    reader.Skip();
-                                    break;
-                            }
-                        }
-                        else
-                        {
-                            reader.Read();
-                        }
-                    }
-                }
-            }
-            catch (XmlException)
-            {
             }
         }
     }

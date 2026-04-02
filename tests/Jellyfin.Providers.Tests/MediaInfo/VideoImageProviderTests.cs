@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MediaBrowser.Controller.Entities;
-using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.MediaEncoding;
 using MediaBrowser.Controller.Persistence;
@@ -23,12 +22,12 @@ namespace Jellyfin.Providers.Tests.MediaInfo
         {
             return new()
             {
-                new Movie { IsPlaceHolder = true },
+                new Video { IsPlaceHolder = true },
 
-                new Movie { DefaultVideoStreamIndex = null },
+                new Video { DefaultVideoStreamIndex = null },
 
                 // set a default index but don't put anything there (invalid input, but provider shouldn't break)
-                new Movie { DefaultVideoStreamIndex = 0 }
+                new Video { DefaultVideoStreamIndex = 0 }
             };
         }
 
@@ -49,7 +48,7 @@ namespace Jellyfin.Providers.Tests.MediaInfo
         [InlineData(5, 0)] // default out of valid range
         public async Task GetImage_DefaultVideoStreams_ReturnsCorrectStreamImage(int defaultIndex, int targetIndex)
         {
-            var input = new Movie { DefaultVideoStreamIndex = defaultIndex };
+            var input = new Video { DefaultVideoStreamIndex = defaultIndex };
 
             string targetPath = "path.jpg";
             var mediaStreams = new List<MediaStream>();
@@ -83,7 +82,7 @@ namespace Jellyfin.Providers.Tests.MediaInfo
         public async Task GetImage_TimeSpan_SelectsCorrectTime(int? runTimeSeconds, long expectedSeconds)
         {
             MediaStream targetStream = new() { Type = MediaStreamType.Video, Index = 0 };
-            var input = new Movie
+            var input = new Video
             {
                 DefaultVideoStreamIndex = 0,
                 RunTimeTicks = runTimeSeconds * TimeSpan.TicksPerSecond

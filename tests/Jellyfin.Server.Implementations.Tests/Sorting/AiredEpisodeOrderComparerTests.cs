@@ -1,7 +1,6 @@
 using System;
 using Emby.Server.Implementations.Sorting;
 using MediaBrowser.Controller.Entities;
-using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Entities.TV;
 using Xunit;
 
@@ -40,12 +39,12 @@ namespace Jellyfin.Server.Implementations.Tests.Sorting
             public EpisodeTestData()
             {
                 Add(
-                    new Movie(),
-                    new Movie(),
+                    new Video(),
+                    new Video(),
                     0);
 
                 Add(
-                    new Movie(),
+                    new Video(),
                     new Episode(),
                     1);
 

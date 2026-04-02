@@ -9,7 +9,6 @@ using MediaBrowser.Controller;
 using MediaBrowser.Controller.BaseItemManager;
 using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Entities;
-using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.Lyrics;
 using MediaBrowser.Controller.MediaSegments;
@@ -79,7 +78,7 @@ namespace Jellyfin.Providers.Tests.Manager
         [MemberData(nameof(RefreshSingleItemOrderData))]
         public async Task RefreshSingleItem_ServiceOrdering_FollowsPriority(Mock<IMetadataService>[] servicesList, int expectedIndex)
         {
-            var item = new Movie();
+            var item = new Video();
 
             using var providerManager = GetProviderManager();
             AddParts(providerManager, metadataServices: servicesList.Select(s => s.Object).ToArray());
@@ -100,7 +99,7 @@ namespace Jellyfin.Providers.Tests.Manager
         [InlineData(false)]
         public async Task RefreshSingleItem_RefreshMetadata_WhenServiceFound(bool serviceFound)
         {
-            var item = new Movie();
+            var item = new Video();
 
             var servicesList = new[] { MockIMetadataService(false, serviceFound) };
 
@@ -143,7 +142,7 @@ namespace Jellyfin.Providers.Tests.Manager
         [MemberData(nameof(GetImageProvidersOrderData))]
         public void GetImageProviders_ProviderOrder_MatchesExpected(int providerCount, int[]? libraryOrder, int[]? serverOrder, int?[]? hasOrderOrder, int[] expectedOrder)
         {
-            var item = new Movie();
+            var item = new Video();
 
             var nameProvider = new Func<int, string>(i => "Provider" + i);
 
@@ -207,7 +206,7 @@ namespace Jellyfin.Providers.Tests.Manager
             bool fullRefresh = false,
             bool baseItemEnabled = true)
         {
-            var item = new Movie
+            var item = new Video
             {
                 IsLocked = itemLocked
             };

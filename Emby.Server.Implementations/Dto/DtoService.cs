@@ -26,7 +26,6 @@ using MediaBrowser.Model.Querying;
 using Microsoft.Extensions.Logging;
 using Book = MediaBrowser.Controller.Entities.Book;
 using Episode = MediaBrowser.Controller.Entities.TV.Episode;
-using Movie = MediaBrowser.Controller.Entities.Movies.Movie;
 using MusicAlbum = MediaBrowser.Controller.Entities.Audio.MusicAlbum;
 using Person = MediaBrowser.Controller.Entities.Person;
 using Photo = MediaBrowser.Controller.Entities.Photo;
@@ -43,12 +42,10 @@ namespace Emby.Server.Implementations.Dto
                 BaseItemKind.Genre, [
                     BaseItemKind.Audio,
                     BaseItemKind.Episode,
-                    BaseItemKind.Movie,
                     BaseItemKind.MusicAlbum,
                     BaseItemKind.MusicArtist,
                     BaseItemKind.MusicVideo,
-                    BaseItemKind.Series,
-                    BaseItemKind.Trailer
+                    BaseItemKind.Series
                 ]
             },
             {
@@ -70,36 +67,30 @@ namespace Emby.Server.Implementations.Dto
                 BaseItemKind.Person, [
                     BaseItemKind.Audio,
                     BaseItemKind.Episode,
-                    BaseItemKind.Movie,
                     BaseItemKind.MusicAlbum,
                     BaseItemKind.MusicArtist,
                     BaseItemKind.MusicVideo,
-                    BaseItemKind.Series,
-                    BaseItemKind.Trailer
+                    BaseItemKind.Series
                 ]
             },
             {
                 BaseItemKind.Studio, [
                     BaseItemKind.Audio,
                     BaseItemKind.Episode,
-                    BaseItemKind.Movie,
                     BaseItemKind.MusicAlbum,
                     BaseItemKind.MusicArtist,
                     BaseItemKind.MusicVideo,
-                    BaseItemKind.Series,
-                    BaseItemKind.Trailer
+                    BaseItemKind.Series
                 ]
             },
             {
                 BaseItemKind.Year, [
                     BaseItemKind.Audio,
                     BaseItemKind.Episode,
-                    BaseItemKind.Movie,
                     BaseItemKind.MusicAlbum,
                     BaseItemKind.MusicArtist,
                     BaseItemKind.MusicVideo,
-                    BaseItemKind.Series,
-                    BaseItemKind.Trailer
+                    BaseItemKind.Series
                 ]
             }
         }.ToFrozenDictionary();
@@ -386,8 +377,8 @@ namespace Emby.Server.Implementations.Dto
                 dto.ArtistCount = taggedItems.Count(i => i is MusicArtist);
                 dto.AlbumCount = taggedItems.Count(i => i is MusicAlbum);
                 dto.EpisodeCount = taggedItems.Count(i => i is Episode);
-                dto.MovieCount = taggedItems.Count(i => i is Movie);
-                dto.TrailerCount = taggedItems.Count(i => i is Trailer);
+                dto.MovieCount = 0;
+                dto.TrailerCount = 0;
                 dto.MusicVideoCount = taggedItems.Count(i => i is MusicVideo);
                 dto.SeriesCount = taggedItems.Count(i => i is Series);
                 dto.SongCount = taggedItems.Count(i => i is Audio);
@@ -1226,7 +1217,7 @@ namespace Emby.Server.Implementations.Dto
 
             if (options.ContainsField(ItemFields.ProductionLocations))
             {
-                if (item.ProductionLocations.Length > 0 || item is Movie)
+                if (item.ProductionLocations.Length > 0)
                 {
                     dto.ProductionLocations = item.ProductionLocations;
                 }
