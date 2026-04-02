@@ -59,11 +59,6 @@ public enum CollectionType
     photos = 9,
 
     /// <summary>
-    /// Live tv collection.
-    /// </summary>
-    livetv = 10,
-
-    /// <summary>
     /// Playlists collection.
     /// </summary>
     playlists = 11,
