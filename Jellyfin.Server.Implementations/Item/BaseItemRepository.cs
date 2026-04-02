@@ -29,11 +29,9 @@ using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Entities.Audio;
 using MediaBrowser.Controller.Entities.TV;
-using MediaBrowser.Controller.LiveTv;
 using MediaBrowser.Controller.Persistence;
 using MediaBrowser.Model.Dto;
 using MediaBrowser.Model.Entities;
-using MediaBrowser.Model.LiveTv;
 using MediaBrowser.Model.Querying;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -541,10 +539,6 @@ public sealed class BaseItemRepository
             {
                 result.MusicVideoCount = count.Count;
             }
-            else if (string.Equals(count.Key, lookup[BaseItemKind.LiveTvProgram], StringComparison.Ordinal))
-            {
-                result.ProgramCount = count.Count;
-            }
             else if (string.Equals(count.Key, lookup[BaseItemKind.Series], StringComparison.Ordinal))
             {
                 result.SeriesCount = count.Count;
@@ -910,28 +904,10 @@ public sealed class BaseItemRepository
             dto.LockedFields = entity.LockedFields?.Select(e => (MetadataField)e.Id).ToArray() ?? [];
         }
 
-        if (entity.Audio is not null)
-        {
-            dto.Audio = (ProgramAudio)entity.Audio;
-        }
-
         dto.ExtraIds = string.IsNullOrWhiteSpace(entity.ExtraIds) ? [] : entity.ExtraIds.Split('|').Select(e => Guid.Parse(e)).ToArray();
         dto.ProductionLocations = entity.ProductionLocations?.Split('|', StringSplitOptions.RemoveEmptyEntries) ?? [];
         dto.Studios = entity.Studios?.Split('|') ?? [];
         dto.Tags = string.IsNullOrWhiteSpace(entity.Tags) ? [] : entity.Tags.Split('|');
-
-        if (dto is IHasProgramAttributes hasProgramAttributes)
-        {
-            hasProgramAttributes.IsMovie = entity.IsMovie;
-            hasProgramAttributes.IsSeries = entity.IsSeries;
-            hasProgramAttributes.EpisodeTitle = entity.EpisodeTitle;
-            hasProgramAttributes.IsRepeat = entity.IsRepeat;
-        }
-
-        if (dto is LiveTvChannel liveTvChannel)
-        {
-            liveTvChannel.ServiceName = entity.ExternalServiceId;
-        }
 
         if (dto is Trailer trailer)
         {
@@ -964,11 +940,6 @@ public sealed class BaseItemRepository
         if (dto is IHasAlbumArtist hasAlbumArtists)
         {
             hasAlbumArtists.AlbumArtists = entity.AlbumArtists?.Split('|', StringSplitOptions.RemoveEmptyEntries) ?? [];
-        }
-
-        if (dto is LiveTvProgram program)
-        {
-            program.ShowId = entity.ShowId;
         }
 
         if (entity.Images is not null)
@@ -1067,11 +1038,6 @@ public sealed class BaseItemRepository
             ProviderValue = e.Value
         }).ToList();
 
-        if (dto.Audio.HasValue)
-        {
-            entity.Audio = (ProgramAudioEntity)dto.Audio;
-        }
-
         if (dto.ExtraType.HasValue)
         {
             entity.ExtraType = (BaseItemExtraType)dto.ExtraType;
@@ -1089,19 +1055,6 @@ public sealed class BaseItemRepository
                 ItemId = entity.Id
             })
             .ToArray() : null;
-
-        if (dto is IHasProgramAttributes hasProgramAttributes)
-        {
-            entity.IsMovie = hasProgramAttributes.IsMovie;
-            entity.IsSeries = hasProgramAttributes.IsSeries;
-            entity.EpisodeTitle = hasProgramAttributes.EpisodeTitle;
-            entity.IsRepeat = hasProgramAttributes.IsRepeat;
-        }
-
-        if (dto is LiveTvChannel liveTvChannel)
-        {
-            entity.ExternalServiceId = liveTvChannel.ServiceName;
-        }
 
         if (dto is Video video)
         {
@@ -1129,11 +1082,6 @@ public sealed class BaseItemRepository
         if (dto is IHasAlbumArtist hasAlbumArtists)
         {
             entity.AlbumArtists = hasAlbumArtists.AlbumArtists is not null ? string.Join('|', hasAlbumArtists.AlbumArtists.Distinct(StringComparer.OrdinalIgnoreCase)) : null;
-        }
-
-        if (dto is LiveTvProgram program)
-        {
-            entity.ShowId = program.ShowId;
         }
 
         if (dto.ImageInfos is not null)

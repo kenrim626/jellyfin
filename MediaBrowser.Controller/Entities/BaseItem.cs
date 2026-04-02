@@ -33,7 +33,6 @@ using MediaBrowser.Model.Entities;
 using MediaBrowser.Model.Globalization;
 using MediaBrowser.Model.IO;
 using MediaBrowser.Model.Library;
-using MediaBrowser.Model.LiveTv;
 using MediaBrowser.Model.MediaInfo;
 using Microsoft.Extensions.Logging;
 
@@ -226,13 +225,6 @@ namespace MediaBrowser.Controller.Entities
 
         [JsonIgnore]
         public Guid OwnerId { get; set; }
-
-        /// <summary>
-        /// Gets or sets the audio.
-        /// </summary>
-        /// <value>The audio.</value>
-        [JsonIgnore]
-        public ProgramAudio? Audio { get; set; }
 
         /// <summary>
         /// Gets the id that should be used to key display prefs for this item.
@@ -736,14 +728,6 @@ namespace MediaBrowser.Controller.Entities
                 if (this is BasePluginFolder || this is Channel)
                 {
                     return true;
-                }
-
-                if (this is IHasCollectionType view)
-                {
-                    if (view.CollectionType == CollectionType.livetv)
-                    {
-                        return true;
-                    }
                 }
 
                 if (GetParent() is AggregateFolder)

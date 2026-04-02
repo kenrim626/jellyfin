@@ -29,7 +29,7 @@ public class PlaylistItemsProvider : ILocalMetadataProvider<Playlist>,
     private readonly IFileSystem _fileSystem;
     private readonly ILibraryManager _libraryManager;
     private readonly ILogger<PlaylistItemsProvider> _logger;
-    private readonly CollectionType[] _ignoredCollections = [CollectionType.livetv, CollectionType.boxsets, CollectionType.playlists];
+    private readonly CollectionType[] _ignoredCollections = [CollectionType.boxsets, CollectionType.playlists];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PlaylistItemsProvider"/> class.

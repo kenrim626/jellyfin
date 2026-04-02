@@ -24,7 +24,6 @@ using MediaBrowser.Common.Extensions;
 using MediaBrowser.Controller;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Library;
-using MediaBrowser.Controller.LiveTv;
 using MediaBrowser.Controller.MediaEncoding;
 using MediaBrowser.Controller.Persistence;
 using MediaBrowser.Controller.Providers;
@@ -830,32 +829,6 @@ namespace Emby.Server.Implementations.Library
         {
             var result = await GetLiveStreamWithDirectStreamProvider(id, cancellationToken).ConfigureAwait(false);
             return result.Item1;
-        }
-
-        public async Task<IReadOnlyList<MediaSourceInfo>> GetRecordingStreamMediaSources(ActiveRecordingInfo info, CancellationToken cancellationToken)
-        {
-            var stream = new MediaSourceInfo
-            {
-                EncoderPath = _appHost.GetApiUrlForLocalAccess() + "/LiveTv/LiveRecordings/" + info.Id + "/stream",
-                EncoderProtocol = MediaProtocol.Http,
-                Path = info.Path,
-                Protocol = MediaProtocol.File,
-                Id = info.Id,
-                SupportsDirectPlay = false,
-                SupportsDirectStream = true,
-                SupportsTranscoding = true,
-                IsInfiniteStream = true,
-                RequiresOpening = false,
-                RequiresClosing = false,
-                BufferMs = 0,
-                IgnoreDts = true,
-                IgnoreIndex = true
-            };
-
-            await new LiveStreamHelper(_mediaEncoder, _logger, _appPaths)
-                .AddMediaInfoWithProbe(stream, false, false, cancellationToken).ConfigureAwait(false);
-
-            return [stream];
         }
 
         public async Task CloseLiveStream(string id)

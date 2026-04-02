@@ -9,7 +9,6 @@ using Jellyfin.Database.Implementations.Entities;
 using MediaBrowser.Model.Drawing;
 using MediaBrowser.Model.Entities;
 using MediaBrowser.Model.Library;
-using MediaBrowser.Model.LiveTv;
 using MediaBrowser.Model.Providers;
 
 namespace MediaBrowser.Model.Dto
@@ -722,18 +721,6 @@ namespace MediaBrowser.Model.Dto
         /// </summary>
         /// <value>The episode title.</value>
         public string EpisodeTitle { get; set; }
-
-        /// <summary>
-        /// Gets or sets the type of the channel.
-        /// </summary>
-        /// <value>The type of the channel.</value>
-        public ChannelType? ChannelType { get; set; }
-
-        /// <summary>
-        /// Gets or sets the audio.
-        /// </summary>
-        /// <value>The audio.</value>
-        public ProgramAudio? Audio { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether this instance is movie.

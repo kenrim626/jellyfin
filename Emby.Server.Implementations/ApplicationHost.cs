@@ -63,7 +63,6 @@ using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.IO;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.LibraryTaskScheduler;
-using MediaBrowser.Controller.LiveTv;
 using MediaBrowser.Controller.Lyrics;
 using MediaBrowser.Controller.MediaEncoding;
 using MediaBrowser.Controller.MediaSegments;
@@ -546,8 +545,6 @@ namespace Emby.Server.Implementations
 
             serviceCollection.AddSingleton<IProviderManager, ProviderManager>();
 
-            // TODO: Refactor to eliminate the circular dependency here so that Lazy<T> isn't required
-            serviceCollection.AddTransient(provider => new Lazy<ILiveTvManager>(provider.GetRequiredService<ILiveTvManager>));
             serviceCollection.AddSingleton<IDtoService, DtoService>();
 
             serviceCollection.AddSingleton<ISessionManager, SessionManager>();
@@ -655,7 +652,6 @@ namespace Emby.Server.Implementations
             Folder.LimitedConcurrencyLibraryScheduler = Resolve<ILimitedConcurrencyLibraryScheduler>();
             Episode.MediaEncoder = Resolve<IMediaEncoder>();
             UserView.TVSeriesManager = Resolve<ITVSeriesManager>();
-            Video.RecordingsManager = Resolve<IRecordingsManager>();
         }
 
         /// <summary>

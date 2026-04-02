@@ -14,7 +14,6 @@ using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Entities.Audio;
 using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Library;
-using MediaBrowser.Controller.LiveTv;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.Dto;
 using MediaBrowser.Model.Entities;
@@ -168,7 +167,6 @@ public class ItemUpdateController : BaseJellyfinApiController
             && item is not ICollectionFolder
             && item is not UserView
             && item is not AggregateFolder
-            && item is not LiveTvChannel
             && item is not IItemByName
             && item.SourceType == SourceType.Library)
         {
@@ -256,11 +254,6 @@ public class ItemUpdateController : BaseJellyfinApiController
             episode.AirsAfterSeasonNumber = request.AirsAfterSeasonNumber;
             episode.AirsBeforeEpisodeNumber = request.AirsBeforeEpisodeNumber;
             episode.AirsBeforeSeasonNumber = request.AirsBeforeSeasonNumber;
-        }
-
-        if (request.Height is not null && item is LiveTvChannel channel)
-        {
-            channel.Height = request.Height.Value;
         }
 
         if (request.Taglines is not null)

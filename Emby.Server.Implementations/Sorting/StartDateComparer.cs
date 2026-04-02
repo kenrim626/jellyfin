@@ -3,7 +3,6 @@
 using System;
 using Jellyfin.Data.Enums;
 using MediaBrowser.Controller.Entities;
-using MediaBrowser.Controller.LiveTv;
 using MediaBrowser.Controller.Sorting;
 
 namespace Emby.Server.Implementations.Sorting
@@ -34,11 +33,6 @@ namespace Emby.Server.Implementations.Sorting
         /// <returns>DateTime.</returns>
         private static DateTime GetDate(BaseItem? x)
         {
-            if (x is LiveTvProgram hasStartDate)
-            {
-                return hasStartDate.StartDate;
-            }
-
             return DateTime.MinValue;
         }
     }

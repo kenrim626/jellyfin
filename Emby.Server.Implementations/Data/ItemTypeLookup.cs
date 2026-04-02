@@ -7,7 +7,6 @@ using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Entities.Audio;
 using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Entities.TV;
-using MediaBrowser.Controller.LiveTv;
 using MediaBrowser.Controller.Persistence;
 using MediaBrowser.Controller.Playlists;
 
@@ -39,8 +38,6 @@ public class ItemTypeLookup : IItemTypeLookup
         { BaseItemKind.Folder, typeof(Folder).FullName! },
         { BaseItemKind.Genre, typeof(Genre).FullName! },
         { BaseItemKind.Movie, typeof(Movie).FullName! },
-        { BaseItemKind.LiveTvChannel, typeof(LiveTvChannel).FullName! },
-        { BaseItemKind.LiveTvProgram, typeof(LiveTvProgram).FullName! },
         { BaseItemKind.MusicAlbum, typeof(MusicAlbum).FullName! },
         { BaseItemKind.MusicArtist, typeof(MusicArtist).FullName! },
         { BaseItemKind.MusicGenre, typeof(MusicGenre).FullName! },
@@ -54,8 +51,6 @@ public class ItemTypeLookup : IItemTypeLookup
         { BaseItemKind.Series, typeof(Series).FullName! },
         { BaseItemKind.Studio, typeof(Studio).FullName! },
         { BaseItemKind.Trailer, typeof(Trailer).FullName! },
-        { BaseItemKind.TvChannel, typeof(LiveTvChannel).FullName! },
-        { BaseItemKind.TvProgram, typeof(LiveTvProgram).FullName! },
         { BaseItemKind.UserRootFolder, typeof(UserRootFolder).FullName! },
         { BaseItemKind.UserView, typeof(UserView).FullName! },
         { BaseItemKind.Video, typeof(Video).FullName! },

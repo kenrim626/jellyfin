@@ -32,7 +32,6 @@ using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Entities.Audio;
 using MediaBrowser.Controller.IO;
 using MediaBrowser.Controller.Library;
-using MediaBrowser.Controller.LiveTv;
 using MediaBrowser.Controller.MediaEncoding;
 using MediaBrowser.Controller.MediaSegments;
 using MediaBrowser.Controller.Persistence;
@@ -304,7 +303,7 @@ namespace Emby.Server.Implementations.Library
             }
             else if (!item.IsFolder)
             {
-                if (item is not Video && item is not LiveTvChannel)
+                if (item is not Video)
                 {
                     return;
                 }
@@ -387,16 +386,6 @@ namespace Emby.Server.Implementations.Library
                 options.DeleteFileLocation = false;
             }
 
-            if (item is LiveTvProgram)
-            {
-                _logger.LogDebug(
-                    "Removing item, Type: {Type}, Name: {Name}, Path: {Path}, Id: {Id}",
-                    item.GetType().Name,
-                    item.Name ?? "Unknown name",
-                    item.Path ?? string.Empty,
-                    item.Id);
-            }
-            else
             {
                 _logger.LogInformation(
                     "Removing item, Type: {Type}, Name: {Name}, Path: {Path}, Id: {Id}",
@@ -1729,11 +1718,6 @@ namespace Emby.Server.Implementations.Library
         {
             if (item is UserView view)
             {
-                if (view.ViewType == CollectionType.livetv)
-                {
-                    return [view.Id];
-                }
-
                 // Translate view into folders
                 if (!view.DisplayParentId.IsEmpty())
                 {

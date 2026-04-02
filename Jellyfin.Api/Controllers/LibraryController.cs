@@ -761,9 +761,8 @@ public class LibraryController : BaseJellyfinApiController
 
         var dtoOptions = new DtoOptions { Fields = fields };
 
-        var program = item as IHasProgramAttributes;
-        bool? isMovie = item is Movie || (program is not null && program.IsMovie) || item is Trailer;
-        bool? isSeries = item is Series || (program is not null && program.IsSeries);
+        bool? isMovie = item is Movie || item is Trailer;
+        bool? isSeries = item is Series;
 
         var includeItemTypes = new List<BaseItemKind>();
         if (isMovie.Value)
@@ -772,7 +771,6 @@ public class LibraryController : BaseJellyfinApiController
             if (_serverConfigurationManager.Configuration.EnableExternalContentInSuggestions)
             {
                 includeItemTypes.Add(BaseItemKind.Trailer);
-                includeItemTypes.Add(BaseItemKind.LiveTvProgram);
             }
         }
         else if (isSeries.Value)

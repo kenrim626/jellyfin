@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using Jellyfin.Data.Enums;
 using Jellyfin.Extensions;
 using MediaBrowser.Controller.Library;
-using MediaBrowser.Controller.LiveTv;
 using MediaBrowser.Controller.Persistence;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.Dto;
@@ -162,18 +161,11 @@ namespace MediaBrowser.Controller.Entities
         [JsonIgnore]
         public override bool HasLocalAlternateVersions => LocalAlternateVersions.Length > 0;
 
-        public static IRecordingsManager RecordingsManager { get; set; }
-
         [JsonIgnore]
         public override SourceType SourceType
         {
             get
             {
-                if (IsActiveRecording())
-                {
-                    return SourceType.LiveTV;
-                }
-
                 return base.SourceType;
             }
         }
@@ -188,7 +180,7 @@ namespace MediaBrowser.Controller.Entities
                     return !Tags.Contains("livestream", StringComparison.OrdinalIgnoreCase);
                 }
 
-                return !IsActiveRecording();
+                return true;
             }
         }
 
@@ -342,21 +334,6 @@ namespace MediaBrowser.Controller.Entities
             }
 
             return IsFileProtocol;
-        }
-
-        protected override bool IsActiveRecording()
-        {
-            return RecordingsManager.GetActiveRecordingInfo(Path) is not null;
-        }
-
-        public override bool CanDelete()
-        {
-            if (IsActiveRecording())
-            {
-                return false;
-            }
-
-            return base.CanDelete();
         }
 
         public IEnumerable<Guid> GetAdditionalPartIds()
